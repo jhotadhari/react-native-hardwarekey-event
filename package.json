@@ -149,7 +149,7 @@
     ]
   },
   "codegenConfig": {
-    "name": "RNHardwarekeyEventSpec",
+    "name": "RNHardwareKeyEventSpec",
     "type": "modules",
     "jsSrcsDir": "src",
     "outputDir": {

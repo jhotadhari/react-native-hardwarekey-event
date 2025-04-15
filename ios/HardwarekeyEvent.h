@@ -1,6 +1,6 @@
 
-#import <HardwarekeyEvent/RNHardwarekeyEventSpec.h>
+#import <HardwareKeyEvent/RNHardwareKeyEventSpec.h>
 
-@interface HardwarekeyEvent : NSObject <NativeHardwarekeyEventSpec>
+@interface HardwareKeyEvent : NSObject <NativeHardwareKeyEventSpec>
 
 @end
