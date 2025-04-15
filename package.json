@@ -1,6 +1,6 @@
 {
   "name": "react-native-hardwarekey-event",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Easily add JS callbacks to hardware KeyEvents",
   "source": "./src/index.tsx",
   "main": "./lib/module/index.js",
