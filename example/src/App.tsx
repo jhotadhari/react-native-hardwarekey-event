@@ -14,9 +14,11 @@ export default function App() {
     callbacks: {
       'KEYCODE_VOLUME_UP': ( response?: KeyEventResponse ) => {
         console.log( response );
+        setPressed( 'KEYCODE_VOLUME_UP' );
       },
       'KEYCODE_VOLUME_DOWN': ( response?: KeyEventResponse ) => {
         console.log( response );
+        setPressed( 'KEYCODE_VOLUME_DOWN' );
       },
     },
     onError: ( error?: EventError ) => {
