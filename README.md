@@ -72,7 +72,7 @@ export default function App() {
 }
 ```
 
-More advances usage would be to import the `HardwareKeyEvent` module and write your own implementation.
+More advanced usage would be to import the `HardwareKeyEvent` module and write your own implementation.
 
 ## Contributing
 
