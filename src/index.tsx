@@ -1,5 +1,4 @@
-import HardwarekeyEvent from './NativeHardwarekeyEvent';
+export { default as HardwareKeyEvent } from './NativeHardwareKeyEvent';
+export * from './NativeHardwareKeyEvent';
+export { default as useHardwareKeyEvent } from './useHardwareKeyEvent';
 
-export function multiply(a: number, b: number): number {
-  return HardwarekeyEvent.multiply(a, b);
-}

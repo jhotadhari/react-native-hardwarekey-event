@@ -1,6 +1,6 @@
-#import "HardwarekeyEvent.h"
+#import "HardwareKeyEvent.h"
 
-@implementation HardwarekeyEvent
+@implementation HardwareKeyEvent
 RCT_EXPORT_MODULE()
 
 - (NSNumber *)multiply:(double)a b:(double)b {
@@ -12,7 +12,7 @@ RCT_EXPORT_MODULE()
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params
 {
-    return std::make_shared<facebook::react::NativeHardwarekeyEventSpecJSI>(params);
+    return std::make_shared<facebook::react::NativeHardwareKeyEventSpecJSI>(params);
 }
 
 @end

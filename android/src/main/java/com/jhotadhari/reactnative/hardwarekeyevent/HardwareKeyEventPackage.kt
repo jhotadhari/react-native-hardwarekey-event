@@ -1,4 +1,4 @@
-package com.hardwarekeyevent
+package com.jhotadhari.reactnative.hardwarekeyevent
 
 import com.facebook.react.BaseReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -7,10 +7,10 @@ import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import java.util.HashMap
 
-class HardwarekeyEventPackage : BaseReactPackage() {
+class HardwareKeyEventPackage : BaseReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
-    return if (name == HardwarekeyEventModule.NAME) {
-      HardwarekeyEventModule(reactContext)
+    return if (name == HardwareKeyEventModule.NAME) {
+      HardwareKeyEventModule(reactContext)
     } else {
       null
     }
@@ -19,9 +19,9 @@ class HardwarekeyEventPackage : BaseReactPackage() {
   override fun getReactModuleInfoProvider(): ReactModuleInfoProvider {
     return ReactModuleInfoProvider {
       val moduleInfos: MutableMap<String, ReactModuleInfo> = HashMap()
-      moduleInfos[HardwarekeyEventModule.NAME] = ReactModuleInfo(
-        HardwarekeyEventModule.NAME,
-        HardwarekeyEventModule.NAME,
+      moduleInfos[HardwareKeyEventModule.NAME] = ReactModuleInfo(
+        HardwareKeyEventModule.NAME,
+        HardwareKeyEventModule.NAME,
         false,  // canOverrideExistingModule
         false,  // needsEagerInit
         false,  // isCxxModule

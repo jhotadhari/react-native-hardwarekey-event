@@ -34,6 +34,8 @@ yarn android
 
 ### iOS
 
+**Currently there is no support for iOS**
+
 For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
 
 The first time you create a new project, run the Ruby bundler to install CocoaPods itself:

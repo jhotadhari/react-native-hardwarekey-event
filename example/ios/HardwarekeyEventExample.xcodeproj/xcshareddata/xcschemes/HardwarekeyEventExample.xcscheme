@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "HardwarekeyEventExample.app"
-               BlueprintName = "HardwarekeyEventExample"
-               ReferencedContainer = "container:HardwarekeyEventExample.xcodeproj">
+               BuildableName = "HardwareKeyEventExample.app"
+               BlueprintName = "HardwareKeyEventExample"
+               ReferencedContainer = "container:HardwareKeyEventExample.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "HardwarekeyEventExampleTests.xctest"
-               BlueprintName = "HardwarekeyEventExampleTests"
-               ReferencedContainer = "container:HardwarekeyEventExample.xcodeproj">
+               BuildableName = "HardwareKeyEventExampleTests.xctest"
+               BlueprintName = "HardwareKeyEventExampleTests"
+               ReferencedContainer = "container:HardwareKeyEventExample.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "HardwarekeyEventExample.app"
-            BlueprintName = "HardwarekeyEventExample"
-            ReferencedContainer = "container:HardwarekeyEventExample.xcodeproj">
+            BuildableName = "HardwareKeyEventExample.app"
+            BlueprintName = "HardwareKeyEventExample"
+            ReferencedContainer = "container:HardwareKeyEventExample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "HardwarekeyEventExample.app"
-            BlueprintName = "HardwarekeyEventExample"
-            ReferencedContainer = "container:HardwarekeyEventExample.xcodeproj">
+            BuildableName = "HardwareKeyEventExample.app"
+            BlueprintName = "HardwareKeyEventExample"
+            ReferencedContainer = "container:HardwareKeyEventExample.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

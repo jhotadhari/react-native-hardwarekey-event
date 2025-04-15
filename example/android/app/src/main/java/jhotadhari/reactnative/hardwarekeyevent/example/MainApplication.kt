@@ -1,4 +1,4 @@
-package hardwarekeyevent.example
+package jhotadhari.reactnative.hardwarekeyevent.example
 
 import android.app.Application
 import com.facebook.react.PackageList
