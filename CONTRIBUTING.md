@@ -62,30 +62,11 @@ yarn typecheck
 yarn lint
 ```
 
-To fix formatting errors, run the following:
-
-```sh
-yarn lint --fix
-```
-
 Remember to add tests for your change if possible. Run the unit tests by:
 
 ```sh
 yarn test
 ```
-
-### Commit message convention
-
-We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
-
-- `fix`: bug fixes, e.g. fix crash due to deprecated method.
-- `feat`: new features, e.g. add new method to the module.
-- `refactor`: code refactor, e.g. migrate from class components to hooks.
-- `docs`: changes into documentation, e.g. add usage example for the module..
-- `test`: adding or updating tests, e.g. add integration tests using detox.
-- `chore`: tooling changes, e.g. change CI config.
-
-Our pre-commit hooks verify that your commit message matches this format when committing.
 
 ### Linting and tests
 
@@ -97,12 +78,12 @@ Our pre-commit hooks verify that the linter and tests pass when committing.
 
 ### Publishing to npm
 
-We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
+We use a script to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
 
 To publish new versions, run the following:
 
 ```sh
-yarn release
+yarn run release <version>
 ```
 
 ### Scripts
@@ -123,6 +104,7 @@ The `package.json` file contains various scripts for common tasks:
 
 When you're sending a pull request:
 
+- The development branch is called `development`. This should be the pull request base.
 - Prefer small pull requests focused on one change.
 - Verify that linters and tests are passing.
 - Review the documentation to make sure it looks good.
