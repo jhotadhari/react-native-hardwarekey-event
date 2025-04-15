@@ -42,7 +42,12 @@
   },
   "keywords": [
     "react-native",
-    "ios",
+    "volume",
+    "keyevent",
+    "keys",
+    "hardwarekey",
+    "module",
+    "turbo",
     "android"
   ],
   "repository": {
