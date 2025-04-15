@@ -1,4 +1,4 @@
-package com.hardwarekeyevent
+package com.jhotadhari.reactnative.hardwarekeyevent
 
 import com.facebook.react.BaseReactPackage
 import com.facebook.react.bridge.NativeModule

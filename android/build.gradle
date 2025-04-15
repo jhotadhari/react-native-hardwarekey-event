@@ -36,7 +36,7 @@ def supportsNamespace() {
 
 android {
   if (supportsNamespace()) {
-    namespace "com.hardwarekeyevent"
+    namespace "com.jhotadhari.reactnative.hardwarekeyevent"
 
     sourceSets {
       main {
@@ -96,5 +96,5 @@ dependencies {
 react {
   jsRootDir = file("../src/")
   libraryName = "HardwarekeyEvent"
-  codegenJavaPackageName = "com.hardwarekeyevent"
+  codegenJavaPackageName = "com.jhotadhari.reactnative.hardwarekeyevent"
 }

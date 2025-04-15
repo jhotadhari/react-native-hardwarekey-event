@@ -157,7 +157,7 @@
       "android": "android/generated"
     },
     "android": {
-      "javaPackageName": "com.hardwarekeyevent"
+      "javaPackageName": "com.jhotadhari.reactnative.hardwarekeyevent"
     },
     "includesGeneratedCode": true
   },
