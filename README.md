@@ -1,37 +1,25 @@
 # react-native-hardwarekey-event
 
-Easily add JS callbacks to hardware KeyEvents — no Activity inheritance required.
+React Native TurboModule for responding to Android hardware key events (volume
+buttons, media keys, D-pad, and more) — no Activity inheritance required. iOS
+volume keys supported via `AVAudioSession` KVO.
 
 ## Requirements
 
-The library uses a TurboModule and requires React Native New Architecture enabled.
+- React Native 0.72+ with **New Architecture** enabled (`newArchEnabled=true`)
+- Android API 24+ (Android 7.0)
+- iOS: volume keys only (platform limitation — [details](docs/ios.md))
 
-`./android/gradle.properties`:
-```properties
-newArchEnabled=true
-```
-
-### Android only
-
-iOS is not currently supported. If someone adds iOS support, a pull request would be welcome.
-
-## Installation
+## Install
 
 ```sh
-# Using npm
 npm install react-native-hardwarekey-event
-
-# Using yarn
-yarn add react-native-hardwarekey-event
 ```
 
 **No Activity changes needed.** The library installs itself automatically via
-`Window.Callback` interception — your `MainActivity` stays a plain
-`ReactActivity`.
+`Window.Callback` interception.
 
-## Usage
-
-### Hook API (recommended)
+## Quick start
 
 ```tsx
 import {
@@ -40,20 +28,15 @@ import {
 } from 'react-native-hardwarekey-event';
 import type { KeyEvent } from 'react-native-hardwarekey-event';
 
-export default function App() {
+function VolumeButtonHandler() {
   const { isRegistered, error } = useHardwareKeyEvent({
     keys: [KeyCode.VOLUME_UP, KeyCode.VOLUME_DOWN],
     onKeyDown: (event: KeyEvent) => {
-      console.log('Key down:', event.keyCodeString);
-    },
-    onKeyUp: (event: KeyEvent) => {
-      console.log('Key up:', event.keyCodeString);
+      console.log(`${event.keyCodeString} pressed`);
     },
     onLongPress: (event: KeyEvent) => {
-      console.log('Long press:', event.keyCodeString);
+      console.log(`${event.keyCodeString} held`);
     },
-    longPressTimeout: 500, // ms, default 500
-    enabled: true,         // default true — set false to pause
   });
 
   if (error) return <Text>Error: {error.message}</Text>;
@@ -61,130 +44,97 @@ export default function App() {
 }
 ```
 
-### Imperative API (non-React contexts)
+## Features
+
+- **No Activity inheritance** — auto-installs via `Window.Callback` interception
+- **Multi-listener** — multiple hooks/components can observe different key sets
+- **Type-safe key codes** — `KeyCode` enum with 51 constants; TypeScript catches typos
+- **Long-press detection** — built-in, configurable timeout
+- **Rich event payload** — `listenerId`, `keyCode`, `action`, `metaState`,
+  `repeatCount`, `deviceId`, `flags`
+- **Feature detection** — `useSupportedKeyCodes()` queries device capabilities
+- **Imperative API** — use outside React (Redux sagas, vanilla JS services)
+- **Backward-compatible** — 0.0.x consumers can use the `./compat` import path
+  while migrating
+
+## Documentation
+
+| Document | Content |
+|---|---|
+| [API Reference](docs/api-reference.md) | Every export with signatures, options, and examples |
+| [Key Codes Reference](docs/keycodes.md) | All 51 supported key codes grouped by category |
+| [Android Setup](docs/android-setup.md) | New Architecture requirements, auto-install, troubleshooting |
+| [iOS Support](docs/ios.md) | Current state, limitations, volume-key observation |
+| [Architecture](docs/architecture.md) | Native interceptor chain, JS layer, data flow |
+| [Testing](docs/testing.md) | Jest, example app, on-device checklist |
+| [Migration Guide](MIGRATION.md) | 0.0.x → 1.0.0 step-by-step migration |
+
+## Usage patterns
+
+### Type-safe key codes
+
+```ts
+import { KeyCode, isKeyCode, ALL_KEY_CODES } from 'react-native-hardwarekey-event';
+
+// Compile-time error on typos:
+useHardwareKeyEvent({ keys: [KeyCode.VOLUME_UP], onKeyDown: fn });
+
+// Validate dynamic strings:
+if (isKeyCode(someUnknownString)) {
+  // someUnknownString is now typed as KeyCode
+}
+```
+
+### Multiple concurrent listeners
+
+```tsx
+function MediaController() {
+  useHardwareKeyEvent({ keys: [KeyCode.VOLUME_UP, KeyCode.VOLUME_DOWN], onKeyDown: handleVolume });
+  useHardwareKeyEvent({ keys: [KeyCode.MEDIA_NEXT, KeyCode.MEDIA_PREVIOUS], onKeyDown: handleTrack });
+  // Both work independently — no interference
+}
+```
+
+### Imperative API (non-React)
 
 ```ts
 import { registerHardwareKeyEvent, KeyCode } from 'react-native-hardwarekey-event';
 
 const listener = await registerHardwareKeyEvent({
   keys: [KeyCode.VOLUME_UP],
-  onKeyDown: (event) => console.log('Down:', event.keyCodeString),
-  onLongPress: (event) => console.log('Long press:', event.keyCodeString),
+  onKeyDown: (event) => console.log(event.keyCodeString),
 });
 
-// Later…
-await listener.unregister(); // safe to call multiple times
-```
-
-### Feature detection
-
-```tsx
-import { useSupportedKeyCodes, KeyCode } from 'react-native-hardwarekey-event';
-
-function DeviceCapabilities() {
-  const supported = useSupportedKeyCodes();
-
-  return (
-    <View>
-      {supported.map((code) => (
-        <Text key={code}>{code}</Text>
-      ))}
-    </View>
-  );
-}
-```
-
-### Type-safe key codes
-
-Use the `KeyCode` enum instead of raw strings — TypeScript catches typos at
-compile time:
-
-```ts
-import { KeyCode, isKeyCode, ALL_KEY_CODES } from 'react-native-hardwarekey-event';
-
-// Compile-time error: 'KeyCode.VOLUME_UPP' does not exist
-// Correct:
-console.log(KeyCode.VOLUME_UP); // 'KEYCODE_VOLUME_UP'
-
-// Validate dynamic strings:
-if (isKeyCode(someUnknownString)) {
-  // someUnknownString is narrowed to KeyCode
-}
-```
-
-### Multiple concurrent listeners
-
-Each call to `useHardwareKeyEvent` (or `registerHardwareKeyEvent`) creates an
-independent listener. Different parts of your app can observe different key
-sets without interfering:
-
-```tsx
-function VolumeControl() {
-  useHardwareKeyEvent({
-    keys: [KeyCode.VOLUME_UP, KeyCode.VOLUME_DOWN],
-    onKeyDown: handleVolume,
-  });
-  // …
-}
-
-function MediaControl() {
-  useHardwareKeyEvent({
-    keys: [KeyCode.MEDIA_PLAY_PAUSE, KeyCode.MEDIA_NEXT],
-    onKeyDown: handleMedia,
-  });
-  // …
-}
+// Later:
+await listener.unregister();
 ```
 
 ### Key event payload
 
-Every callback receives a `KeyEvent` object:
+Every callback receives a `KeyEvent`:
 
-| Field           | Type     | Description                                               |
-|-----------------|----------|-----------------------------------------------------------|
-| `listenerId`    | `string` | Registration UUID that matched this event                 |
-| `keyCode`       | `number` | Android `KeyEvent.getKeyCode()`                           |
-| `keyCodeString` | `string` | Constant name (e.g. `'KEYCODE_VOLUME_UP'`)                |
-| `action`        | `string` | `'down'`, `'up'`, or `'multiple'`                         |
-| `metaState`     | `number` | Modifier key bitmask                                      |
-| `repeatCount`   | `number` | Key repeat count while held                               |
-| `deviceId`      | `number` | Input device ID                                           |
-| `flags`         | `number` | Android `KeyEvent` flags bitmask                          |
+| Field | Type | Description |
+|---|---|---|
+| `listenerId` | `string` | Registration UUID |
+| `keyCode` | `number` | Android key code integer |
+| `keyCodeString` | `string` | Constant name (e.g. `"KEYCODE_VOLUME_UP"`) |
+| `action` | `"down"` \| `"up"` \| `"multiple"` \| `"error"` \| `"unknown"` | Key action |
+| `metaState` | `number` | Modifier key bitmask |
+| `repeatCount` | `number` | Key repeats while held |
+| `deviceId` | `number` | Input device ID |
+| `flags` | `number` | KeyEvent flags bitmask |
+| `errorMsg` | `string \| undefined` | Error description (only when `action: "error"`) |
 
-## Migration from 0.x
+## Migrating from 0.x
 
-If you're migrating from v0.0.x, a backward-compatible wrapper is available:
-
-```ts
-// Old API — works via the compat path, emits deprecation warning in dev
-import { useHardwareKeyEvent } from 'react-native-hardwarekey-event/compat';
-
-useHardwareKeyEvent({
-  callbacks: {
-    KEYCODE_VOLUME_UP: (response) => console.log(response),
-  },
-  onError: (error) => console.log(error),
-});
-```
-
-The compat wrapper will be removed in v2.0.0. See [`MIGRATION.md`](./MIGRATION.md)
-for the full migration guide.
-
-### Quick migration checklist
-
-1. Remove `HardwareKeyListenerActivity` from `MainActivity` — revert to `ReactActivity()`
-2. Switch to the new hook signature: `{ keys: KeyCode[], onKeyDown?, onKeyUp?, onLongPress? }`
-3. Replace raw key strings with `KeyCode` enum values
-4. The `onError` callback is gone — check `error` from the hook return instead
+A compat wrapper is available at `react-native-hardwarekey-event/compat`. It
+emits a deprecation warning in development and will be removed in v2.0.0. See
+the [Migration Guide](MIGRATION.md) for the full walkthrough.
 
 ## Contributing
 
-See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow.
 
 ## License
 
 MIT
-
----
-
-Made with [create-react-native-library](https://github.com/callstack/react-native-builder-bob)
