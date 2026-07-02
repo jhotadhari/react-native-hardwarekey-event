@@ -69,7 +69,9 @@ export function useHardwareKeyEvent({
     let listenerId: string | null = null;
     let subscription: EventSubscription | null = null;
 
-    const keyCodeStrings = Object.keys(callbacks).filter((k) =>
+    const callbacksObj = callbacks ?? {};
+
+    const keyCodeStrings = Object.keys(callbacksObj).filter((k) =>
       k.startsWith('KEYCODE_')
     );
 
@@ -89,10 +91,12 @@ export function useHardwareKeyEvent({
         listenerId = response.listenerId;
 
         subscription = HardwareKeyEvent.onKeyEvent((event: KeyEvent) => {
-          // In the compat layer we forward every event whose keyCodeString
-          // has a registered callback.  We don't filter by listenerId
-          // because the old API only supported a single implicit listener.
-          const cb = callbacks[event.keyCodeString];
+          // Filter by listenerId so events from other (non-compat)
+          // listeners do not cause double-firing of compat callbacks.
+          if (event.listenerId !== listenerId) {
+            return;
+          }
+          const cb = callbacksObj[event.keyCodeString];
           if (cb) {
             cb({
               keyCode: event.keyCode,

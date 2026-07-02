@@ -49,6 +49,11 @@ public final class KeyCodeMapper {
             } catch (final IllegalAccessException ignored) {
                 // Public fields should always be accessible; skip gracefully
                 // if the runtime denies access.
+            } catch (final RuntimeException ignored) {
+                // Some OEM ROMs aggressively block reflection even on public
+                // SDK fields (e.g. via SecurityException).  Skip the field
+                // rather than allowing ExceptionInInitializerError to brick
+                // the entire module.
             }
         }
 

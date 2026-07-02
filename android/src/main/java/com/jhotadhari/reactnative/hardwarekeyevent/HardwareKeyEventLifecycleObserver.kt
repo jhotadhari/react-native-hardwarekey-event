@@ -62,7 +62,9 @@ internal class HardwareKeyEventLifecycleObserver(
 
     override fun onActivityStarted(activity: Activity) {}
 
-    override fun onActivityResumed(activity: Activity) {}
+    override fun onActivityResumed(activity: Activity) {
+        module.onActivityResumed(activity)
+    }
 
     override fun onActivityPaused(activity: Activity) {}
 

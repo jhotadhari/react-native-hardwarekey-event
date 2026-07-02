@@ -32,7 +32,6 @@ static NSInteger const kErrorCodeInvalidParams = 1;
 // ---------------------------------------------------------------------------
 
 static NSString * const kEventOnKeyEvent = @"onKeyEvent";
-static NSString * const kEventOnError    = @"onError";
 
 // ---------------------------------------------------------------------------
 // Helper: reject a promise with an NSError
@@ -142,10 +141,24 @@ RCT_EXPORT_MODULE()
 }
 
 - (void)emitErrorEvent:(NSDictionary *)payload {
+  // Emit error events through the onKeyEvent channel (with action "error")
+  // so a single JS EventEmitter subscription handles both data and error
+  // events — matching the Android behaviour.  There is no separate onError
+  // emitter in the JS TurboModule spec.
+  NSMutableDictionary *keyEvent = [NSMutableDictionary dictionaryWithDictionary:payload];
+  keyEvent[@"action"]        = @"error";
+  keyEvent[@"listenerId"]    = payload[@"listenerId"] ?: @"";
+  keyEvent[@"keyCode"]       = @0;
+  keyEvent[@"keyCodeString"] = @"";
+  keyEvent[@"metaState"]     = @0;
+  keyEvent[@"repeatCount"]   = @0;
+  keyEvent[@"deviceId"]      = @0;
+  keyEvent[@"flags"]         = @0;
+
   if (_hasTurboEventCallback) {
-    _turboEventCallback(kEventOnError, payload);
+    _turboEventCallback(kEventOnKeyEvent, keyEvent);
   } else {
-    [self sendEventWithName:kEventOnError body:payload];
+    [self sendEventWithName:kEventOnKeyEvent body:keyEvent];
   }
 }
 
@@ -158,7 +171,7 @@ RCT_EXPORT_MODULE()
  * `sendEventWithName:body:` calls.
  */
 - (NSArray<NSString *> *)supportedEvents {
-  return @[kEventOnKeyEvent, kEventOnError];
+  return @[kEventOnKeyEvent];
 }
 
 /**
@@ -254,45 +267,40 @@ RCT_EXPORT_METHOD(getSupportedKeyCodes:(RCTPromiseResolveBlock)resolve
 #pragma mark - NativeHardwareKeyEventSpec (TurboModule protocol)
 
 /**
- * Atomically replace the active key-event listener set.
- *
- * This is the **primary** method on the codegen-generated ObjC protocol.
- * Because `enableEvents` can only track a single listener (matching the
- * Android implementation), we tear down any previously registered listeners
- * before creating a new one.
- *
- * The response dictionary contains:
- * - `added`   – the new listener ID (always present)
- * - `removed` – the previous listener ID (present only when replaced)
+ * Implements the codegen-generated ObjC protocol.  The method signatures
+ * use C++ types from the JS spec (e.g. RegisterListenerParams) so this
+ * block is only compiled when the generated header is present.
  */
-- (void)enableEvents:(JS::NativeHardwareKeyEvent::EnableEventsParams &)params
-             resolve:(RCTPromiseResolveBlock)resolve
-              reject:(RCTPromiseRejectBlock)reject {
 
-  RNHardwareKeyEvent *helper = [RNHardwareKeyEvent sharedInstance];
+- (void)registerListener:(JS::NativeHardwareKeyEvent::RegisterListenerParams &)params
+                 resolve:(RCTPromiseResolveBlock)resolve
+                  reject:(RCTPromiseRejectBlock)reject {
 
-  // Gather the old listener IDs before replacing.
-  NSArray<NSString *> *removedIds = [helper removeAllListeners];
-
-  // Extract the key-code string vector into an NSArray.
   auto &keyCodeVec = params.keyCodeStrings();
   NSMutableArray<NSString *> *keys =
     [NSMutableArray arrayWithCapacity:keyCodeVec.size()];
   for (const auto &str : keyCodeVec) {
-    [keys addObject:str];
+    [keys addObject:[NSString stringWithUTF8String:str.c_str()]];
   }
 
-  // Register the new listener.
-  NSString *addedId = [helper registerListenerWithKeyCodeStrings:keys];
+  NSString *listenerId =
+    [[RNHardwareKeyEvent sharedInstance] registerListenerWithKeyCodeStrings:keys];
 
-  // Build the response.
-  NSMutableDictionary *response = [NSMutableDictionary dictionaryWithCapacity:2];
-  response[@"added"] = addedId;
-  if (removedIds.count > 0) {
-    response[@"removed"] = removedIds.firstObject; // single ID, per codegen spec
-  }
+  resolve(@{ @"listenerId": listenerId });
+}
 
-  resolve(response);
+- (void)unregisterListener:(NSString *)listenerId
+                   resolve:(RCTPromiseResolveBlock)resolve
+                    reject:(RCTPromiseRejectBlock)reject {
+
+  [[RNHardwareKeyEvent sharedInstance] unregisterListenerWithId:listenerId];
+  resolve(nil);
+}
+
+- (void)getSupportedKeyCodes:(RCTPromiseResolveBlock)resolve
+                      reject:(RCTPromiseRejectBlock)reject {
+
+  resolve([[RNHardwareKeyEvent sharedInstance] getSupportedKeyCodes]);
 }
 
 #pragma mark - TurboModule callbacks
@@ -315,8 +323,9 @@ RCT_EXPORT_METHOD(getSupportedKeyCodes:(RCTPromiseResolveBlock)resolve
  * Return the JSI TurboModule that wraps this ObjC instance.
  *
  * `NativeHardwareKeyEventSpecJSI` is the codegen-generated ObjCTurboModule
- * subclass that exposes `enableEvents` via JSI and wires up the
- * `onKeyEvent` / `onError` AsyncEventEmitter instances.
+ * subclass that exposes `registerListener`, `unregisterListener`, and
+ * `getSupportedKeyCodes` via JSI and wires up the `onKeyEvent`
+ * AsyncEventEmitter.
  */
 - (std::shared_ptr<facebook::react::TurboModule>)getTurboModule:
     (const facebook::react::ObjCTurboModule::InitParams &)params {

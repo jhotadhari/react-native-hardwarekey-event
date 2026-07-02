@@ -13,6 +13,9 @@ class HardwareKeyEventPackage : BaseReactPackage() {
     companion object {
         @Volatile
         private var lifecycleObserverRegistered = false
+
+        /** Dedicated lock for the double-checked-locking guard above. */
+        private val observerLock = Any()
     }
 
     override fun getModule(
@@ -29,7 +32,7 @@ class HardwareKeyEventPackage : BaseReactPackage() {
         // Window.Callback interceptors are installed automatically on every
         // Activity without requiring a custom base class.
         if (!lifecycleObserverRegistered) {
-            synchronized(this) {
+            synchronized(observerLock) {
                 if (!lifecycleObserverRegistered) {
                     lifecycleObserverRegistered = true
                     val app = reactContext.applicationContext as? Application

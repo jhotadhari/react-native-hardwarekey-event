@@ -14,8 +14,12 @@ import type {
  * - `"down"`  – the key was pressed down
  * - `"up"`    – the key was released
  * - `"multiple"` – the key was pressed repeatedly (key repeat)
+ * - `"error"` – an error occurred during event processing (see `errorMsg`
+ *   on the event payload)
+ * - `"unknown"` – a future or unrecognised Android KeyEvent action was
+ *   received
  */
-export type KeyAction = 'down' | 'up' | 'multiple';
+export type KeyAction = 'down' | 'up' | 'multiple' | 'error' | 'unknown';
 
 // ---------------------------------------------------------------------------
 // Core event payload
@@ -28,13 +32,15 @@ export type KeyAction = 'down' | 'up' | 'multiple';
  * @property keyCode     – Android `KeyEvent.getKeyCode()` value.
  * @property keyCodeString – Human-readable constant name (e.g.
  *                         `"KEYCODE_VOLUME_UP"`).
- * @property action      – Whether the key went down, went up, or is
- *                         repeating.
+ * @property action      – Whether the key went down, went up, is
+ *                         repeating, or represents an error.
  * @property metaState   – Android `KeyEvent.getMetaState()` bitmask
  *                         (Modifier keys held at the time of the event).
  * @property repeatCount – Android `KeyEvent.getRepeatCount()`.
  * @property deviceId    – Android `KeyEvent.getDeviceId()`.
  * @property flags       – Android `KeyEvent.getFlags()` bitmask.
+ * @property errorMsg    – When `action` is `"error"`, a human-readable
+ *                         description of the error.
  */
 export interface KeyEvent {
   /** Unique listener registration ID that matched this event. */
@@ -43,7 +49,7 @@ export interface KeyEvent {
   keyCode: Int32;
   /** Human-readable key code constant name. */
   keyCodeString: string;
-  /** Whether the key went down, went up, or is repeating. */
+  /** Whether the key went down, went up, is repeating, or is an error. */
   action: KeyAction;
   /** Bitmask of active meta / modifier keys (META_*, CTRL_*, ALT_*, SHIFT_*). */
   metaState: Int32;
@@ -53,6 +59,8 @@ export interface KeyEvent {
   deviceId: Int32;
   /** Android KeyEvent flags bitmask (FLAG_* constants). */
   flags: Int32;
+  /** Present only when `action` is `"error"`. */
+  errorMsg?: string;
 }
 
 // ---------------------------------------------------------------------------

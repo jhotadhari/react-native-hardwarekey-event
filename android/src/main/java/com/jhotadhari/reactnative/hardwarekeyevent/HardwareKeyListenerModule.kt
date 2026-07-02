@@ -101,6 +101,28 @@ class HardwareKeyListenerModule(
         }
     }
 
+    /**
+     * Reinstalls the interceptor chain on a resumed Activity if pending
+     * registrations exist but no chain is currently active (e.g. after
+     * navigating A → B → back to A, where B's creation stole the chain
+     * and B's destruction detached it).
+     */
+    internal fun onActivityResumed(activity: Activity) {
+        synchronized(this) {
+            if (registrations.isEmpty()) return
+
+            val activeActivity = activeActivityRef?.get()
+            // Reinstall if the chain was detached (stale or null reference).
+            if (activeActivity == null || activeActivity !== activity) {
+                if (activeActivity != null) {
+                    detachFromActivity(activeActivity)
+                }
+                activeActivityRef = WeakReference(activity)
+                installOnActivity(activity)
+            }
+        }
+    }
+
     // -------------------------------------------------------------------
     // TurboModule overrides (methods match the codegen spec)
     //
@@ -147,6 +169,14 @@ class HardwareKeyListenerModule(
 
             val listenerId = UUID.randomUUID().toString()
 
+            // Build the response ahead of time so that the registration
+            // commit and response construction are both guarded by the
+            // same try-catch — a failure during WritableMap allocation
+            // will reject the promise without leaving a leaked native
+            // registration.
+            val response = Arguments.createMap()
+            response.putString("listenerId", listenerId)
+
             synchronized(this) {
                 registrations[listenerId] = filteredSet
 
@@ -166,8 +196,6 @@ class HardwareKeyListenerModule(
                 // observer will install when an Activity appears.
             }
 
-            val response = Arguments.createMap()
-            response.putString("listenerId", listenerId)
             promise.resolve(response)
         } catch (e: Exception) {
             promise.reject("REGISTER_ERROR", e.message ?: "Failed to register listener")
@@ -218,24 +246,29 @@ class HardwareKeyListenerModule(
     override fun getSupportedKeyCodes(promise: Promise) {
         try {
             val result: WritableArray = Arguments.createArray()
+
+            // Load the key character map once outside the loop — there is
+            // no need to reload it from disk for every key code.
+            val kcm: KeyCharacterMap? = try {
+                KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD)
+            } catch (_: Exception) {
+                null
+            }
+
             for (keyCodeString in KeyCodeMapper.getSupportedKeyCodes()) {
                 val keyCode = KeyCodeMapper.getKeyCodeInt(keyCodeString)
                 val entry: WritableMap = Arguments.createMap()
                 entry.putInt("keyCode", keyCode)
                 entry.putString("keyCodeString", keyCodeString)
 
-                // Best-effort metadata.  Some information (e.g. display
-                // label) requires a KeyCharacterMap, which may not be
-                // available in all contexts.
+                // Best-effort metadata.
                 var label: String? = null
                 var isGamepad = false
                 var isSystem = false
                 try {
                     isGamepad = KeyEvent.isGamepadButton(keyCode)
                     isSystem = KeyEvent.isSystemKey(keyCode)
-                    val displayChar = KeyCharacterMap
-                        .load(KeyCharacterMap.VIRTUAL_KEYBOARD)
-                        .getDisplayLabel(keyCode)
+                    val displayChar = kcm?.getDisplayLabel(keyCode) ?: 0.toChar()
                     if (displayChar != 0.toChar()) {
                         label = displayChar.toString()
                     }

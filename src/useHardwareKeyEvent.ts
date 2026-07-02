@@ -90,9 +90,17 @@ function createLongPressTracker(options: {
 
       // Fire the up callback.
       getOnKeyUp()?.(event);
+    } else if (event.action === 'error') {
+      // Forward native error events to the consumer's error handler
+      // (or log them if no handler is available).
+      const msg = event.errorMsg ?? 'Unknown native error';
+      options.onError?.(new Error(msg));
     }
     // The 'multiple' action is deliberately ignored — it is rare for
     // hardware-key events and its semantics vary across Android versions.
+    // The 'unknown' action is also silently ignored — it represents a
+    // future Android KeyEvent action that the library does not yet
+    // recognise.
   }
 
   function destroy(): void {
@@ -274,7 +282,18 @@ export function useHardwareKeyEvent(
   const keyFingerprint = useMemo(
     () =>
       keys
-        .map((k) => k as string)
+        .filter((k) => {
+          if (!isKeyCode(k)) {
+            if (__DEV__) {
+              console.warn(
+                `[react-native-hardwarekey-event] "${k}" is not a known ` +
+                  'KeyCode — it will be silently ignored by the native layer.'
+              );
+            }
+            return false;
+          }
+          return true;
+        })
         .sort()
         .join('|'),
     [keys]
@@ -405,6 +424,11 @@ export async function registerHardwareKeyEvent(
     getOnKeyUp: () => onKeyUp,
     getOnLongPress: () => onLongPress,
     longPressTimeout,
+    onError: (err: Error) => {
+      // Log long-press callback exceptions so they are not silently
+      // swallowed.  The imperative API has no React state to update.
+      console.error('[react-native-hardwarekey-event] onLongPress error:', err);
+    },
   });
 
   const response = await HardwareKeyEvent.registerListener({ keyCodeStrings });

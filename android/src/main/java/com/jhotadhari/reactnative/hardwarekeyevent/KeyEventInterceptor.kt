@@ -88,13 +88,20 @@ internal class KeyEventInterceptor(
             try {
                 emitter.onKeyEvent(listenerId, keyCodeString, event)
             } catch (e: Exception) {
-                emitter.onError(
-                    listenerId,
-                    "Failed to emit key event for $keyCodeString: ${e.message}"
-                )
+                try {
+                    emitter.onError(
+                        listenerId,
+                        "Failed to emit key event for $keyCodeString: ${e.message}"
+                    )
+                } catch (_: Exception) {
+                    // emitOnKeyEvent inside onError also failed — the bridge
+                    // is likely dead.  There is nothing more we can do.
+                }
             }
-            // Consume the event so it is not delivered a second time by a
-            // downstream callback.
+            // Delegate to inner interceptors so other listeners for the same
+            // key code also receive this event, then consume it to prevent the
+            // original Window.Callback from processing it a second time.
+            delegate.dispatchKeyEvent(event)
             return true
         }
         return delegate.dispatchKeyEvent(event)

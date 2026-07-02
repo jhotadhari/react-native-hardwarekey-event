@@ -95,7 +95,10 @@ static const float kMinVolumeDelta = 0.0001f;
 
   // Filter to only the key codes iOS can actually observe.
   NSMutableSet<NSString *> *matchingKeys = [NSMutableSet setWithCapacity:2];
-  for (NSString *code in keyCodeStrings) {
+  for (id code in keyCodeStrings) {
+    if (![code isKindOfClass:[NSString class]]) {
+      continue; // Skip non-string values (e.g. numbers from JS)
+    }
     if ([code isEqualToString:kVolumeUpKeyCodeString] ||
         [code isEqualToString:kVolumeDownKeyCodeString]) {
       [matchingKeys addObject:code];
