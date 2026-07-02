@@ -21,13 +21,13 @@ import HardwareKeyEvent, { type KeyEvent } from '../NativeHardwareKeyEvent';
 
 /** @deprecated Use `KeyEvent` from the main entry point instead. */
 export interface KeyEventResponse {
-  keyCode: number;
-  keyCodeString: string;
+	keyCode: number;
+	keyCodeString: string;
 }
 
 /** @deprecated Errors now flow through Promise rejections and the hook's `error` state. */
 export interface EventError {
-  errorMsg: string;
+	errorMsg: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -46,81 +46,88 @@ export interface EventError {
  *   New:  useHardwareKeyEvent({ keys: [KeyCode.VOLUME_UP], onKeyDown: fn })
  */
 export function useHardwareKeyEvent({
-  callbacks,
-  onError,
+	callbacks,
+	onError,
 }: {
-  callbacks: { [keyCodeString: string]: (response?: KeyEventResponse) => void };
-  onError?: (error?: EventError) => void;
+	callbacks: {
+		[keyCodeString: string]: (response?: KeyEventResponse) => void;
+	};
+	onError?: (error?: EventError) => void;
 }): void {
-  const deprecationWarned = useRef(false);
+	const deprecationWarned = useRef(false);
 
-  useEffect(() => {
-    if (__DEV__ && !deprecationWarned.current) {
-      deprecationWarned.current = true;
-      console.warn(
-        '[react-native-hardwarekey-event] DEPRECATED: You are using the compat ' +
-          "wrapper (import from 'react-native-hardwarekey-event/compat'). " +
-          'This will be removed in v2.0.0. Please migrate to the new API: ' +
-          'see MIGRATION.md for details.'
-      );
-    }
+	useEffect(() => {
+		if (__DEV__ && !deprecationWarned.current) {
+			deprecationWarned.current = true;
+			console.warn(
+				'[react-native-hardwarekey-event] DEPRECATED: You are using the compat ' +
+					"wrapper (import from 'react-native-hardwarekey-event/compat'). " +
+					'This will be removed in v2.0.0. Please migrate to the new API: ' +
+					'see MIGRATION.md for details.'
+			);
+		}
 
-    let cancelled = false;
-    let listenerId: string | null = null;
-    let subscription: EventSubscription | null = null;
+		let cancelled = false;
+		let listenerId: string | null = null;
+		let subscription: EventSubscription | null = null;
 
-    const callbacksObj = callbacks ?? {};
+		const callbacksObj = callbacks ?? {};
 
-    const keyCodeStrings = Object.keys(callbacksObj).filter((k) =>
-      k.startsWith('KEYCODE_')
-    );
+		const keyCodeStrings = Object.keys(callbacksObj).filter((k) =>
+			k.startsWith('KEYCODE_')
+		);
 
-    if (keyCodeStrings.length === 0) {
-      return;
-    }
+		if (keyCodeStrings.length === 0) {
+			return;
+		}
 
-    HardwareKeyEvent.registerListener({ keyCodeStrings })
-      .then((response) => {
-        if (cancelled) {
-          HardwareKeyEvent.unregisterListener(response.listenerId).catch(() => {
-            /* best-effort */
-          });
-          return;
-        }
+		HardwareKeyEvent.registerListener({ keyCodeStrings })
+			.then((response) => {
+				if (cancelled) {
+					HardwareKeyEvent.unregisterListener(
+						response.listenerId
+					).catch(() => {
+						/* best-effort */
+					});
+					return;
+				}
 
-        listenerId = response.listenerId;
+				listenerId = response.listenerId;
 
-        subscription = HardwareKeyEvent.onKeyEvent((event: KeyEvent) => {
-          // Filter by listenerId so events from other (non-compat)
-          // listeners do not cause double-firing of compat callbacks.
-          if (event.listenerId !== listenerId) {
-            return;
-          }
-          const cb = callbacksObj[event.keyCodeString];
-          if (cb) {
-            cb({
-              keyCode: event.keyCode,
-              keyCodeString: event.keyCodeString,
-            });
-          }
-        });
-      })
-      .catch((err: unknown) => {
-        if (!cancelled && onError) {
-          onError({
-            errorMsg: err instanceof Error ? err.message : String(err),
-          });
-        }
-      });
+				subscription = HardwareKeyEvent.onKeyEvent(
+					(event: KeyEvent) => {
+						// Filter by listenerId so events from other (non-compat)
+						// listeners do not cause double-firing of compat callbacks.
+						if (event.listenerId !== listenerId) {
+							return;
+						}
+						const cb = callbacksObj[event.keyCodeString];
+						if (cb) {
+							cb({
+								keyCode: event.keyCode,
+								keyCodeString: event.keyCodeString,
+							});
+						}
+					}
+				);
+			})
+			.catch((err: unknown) => {
+				if (!cancelled && onError) {
+					onError({
+						errorMsg:
+							err instanceof Error ? err.message : String(err),
+					});
+				}
+			});
 
-    return () => {
-      cancelled = true;
-      subscription?.remove();
-      if (listenerId) {
-        HardwareKeyEvent.unregisterListener(listenerId).catch(() => {
-          /* best-effort */
-        });
-      }
-    };
-  }, [callbacks, onError]);
+		return () => {
+			cancelled = true;
+			subscription?.remove();
+			if (listenerId) {
+				HardwareKeyEvent.unregisterListener(listenerId).catch(() => {
+					/* best-effort */
+				});
+			}
+		};
+	}, [callbacks, onError]);
 }

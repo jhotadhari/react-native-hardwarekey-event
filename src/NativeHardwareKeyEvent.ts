@@ -1,7 +1,7 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
 import type {
-  EventEmitter,
-  Int32,
+	EventEmitter,
+	Int32,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
 // ---------------------------------------------------------------------------
@@ -43,24 +43,24 @@ export type KeyAction = 'down' | 'up' | 'multiple' | 'error' | 'unknown';
  *                         description of the error.
  */
 export interface KeyEvent {
-  /** Unique listener registration ID that matched this event. */
-  listenerId: string;
-  /** Numeric Android key code (e.g. 24 for KEYCODE_VOLUME_UP). */
-  keyCode: Int32;
-  /** Human-readable key code constant name. */
-  keyCodeString: string;
-  /** Whether the key went down, went up, is repeating, or is an error. */
-  action: KeyAction;
-  /** Bitmask of active meta / modifier keys (META_*, CTRL_*, ALT_*, SHIFT_*). */
-  metaState: Int32;
-  /** Number of times the key repeated while held down. */
-  repeatCount: Int32;
-  /** ID of the input device that generated this event. */
-  deviceId: Int32;
-  /** Android KeyEvent flags bitmask (FLAG_* constants). */
-  flags: Int32;
-  /** Present only when `action` is `"error"`. */
-  errorMsg?: string;
+	/** Unique listener registration ID that matched this event. */
+	listenerId: string;
+	/** Numeric Android key code (e.g. 24 for KEYCODE_VOLUME_UP). */
+	keyCode: Int32;
+	/** Human-readable key code constant name. */
+	keyCodeString: string;
+	/** Whether the key went down, went up, is repeating, or is an error. */
+	action: KeyAction;
+	/** Bitmask of active meta / modifier keys (META_*, CTRL_*, ALT_*, SHIFT_*). */
+	metaState: Int32;
+	/** Number of times the key repeated while held down. */
+	repeatCount: Int32;
+	/** ID of the input device that generated this event. */
+	deviceId: Int32;
+	/** Android KeyEvent flags bitmask (FLAG_* constants). */
+	flags: Int32;
+	/** Present only when `action` is `"error"`. */
+	errorMsg?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -75,11 +75,11 @@ export interface KeyEvent {
  *                            "KEYCODE_VOLUME_DOWN"]`).
  */
 export interface RegisterListenerParams {
-  /**
-   * Android `KeyEvent.KEYCODE_*` constant names.
-   * Unknown / unsupported entries are silently ignored by the native layer.
-   */
-  keyCodeStrings: ReadonlyArray<string>;
+	/**
+	 * Android `KeyEvent.KEYCODE_*` constant names.
+	 * Unknown / unsupported entries are silently ignored by the native layer.
+	 */
+	keyCodeStrings: ReadonlyArray<string>;
 }
 
 /**
@@ -90,8 +90,8 @@ export interface RegisterListenerParams {
  *                        listener.
  */
 export interface RegisterListenerResponse {
-  /** Opaque registration identifier. */
-  listenerId: string;
+	/** Opaque registration identifier. */
+	listenerId: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -109,16 +109,16 @@ export interface RegisterListenerResponse {
  * @property isSystem    – `true` when `KeyEvent.isSystemKey(keyCode)`.
  */
 export interface KeyCodeInfo {
-  /** Numeric Android key code. */
-  keyCode: Int32;
-  /** Human-readable key code constant name (e.g. "KEYCODE_VOLUME_UP"). */
-  keyCodeString: string;
-  /** Display label for the key, may be null. */
-  label: string | null;
-  /** True if this key code belongs to a gamepad button. */
-  isGamepad: boolean;
-  /** True if this is a system key (HOME, RECENT, etc.). */
-  isSystem: boolean;
+	/** Numeric Android key code. */
+	keyCode: Int32;
+	/** Human-readable key code constant name (e.g. "KEYCODE_VOLUME_UP"). */
+	keyCodeString: string;
+	/** Display label for the key, may be null. */
+	label: string | null;
+	/** True if this key code belongs to a gamepad button. */
+	isGamepad: boolean;
+	/** True if this is a system key (HOME, RECENT, etc.). */
+	isSystem: boolean;
 }
 
 // ---------------------------------------------------------------------------
@@ -126,59 +126,59 @@ export interface KeyCodeInfo {
 // ---------------------------------------------------------------------------
 
 export interface Spec extends TurboModule {
-  /**
-   * Register a listener for one or more hardware-key events.
-   *
-   * The returned `listenerId` must be used to unregister later. Multiple
-   * registrations can co-exist; each registration independently fires
-   * `onKeyEvent` with its own `listenerId` in the payload.
-   *
-   * @param params.keyCodeStrings – `KEYCODE_*` constant names to observe.
-   * @returns A promise that resolves with the opaque listener ID, or rejects
-   *          with a platform error when registration fails (e.g. the native
-   *          module could not start listening).
-   */
-  registerListener(
-    params: RegisterListenerParams
-  ): Promise<RegisterListenerResponse>;
+	/**
+	 * Register a listener for one or more hardware-key events.
+	 *
+	 * The returned `listenerId` must be used to unregister later. Multiple
+	 * registrations can co-exist; each registration independently fires
+	 * `onKeyEvent` with its own `listenerId` in the payload.
+	 *
+	 * @param params.keyCodeStrings – `KEYCODE_*` constant names to observe.
+	 * @returns A promise that resolves with the opaque listener ID, or rejects
+	 *          with a platform error when registration fails (e.g. the native
+	 *          module could not start listening).
+	 */
+	registerListener(
+		params: RegisterListenerParams
+	): Promise<RegisterListenerResponse>;
 
-  /**
-   * Unregister a previously registered listener.
-   *
-   * Once resolved the listener will no longer receive key events. Calling
-   * this with an unknown or already-unregistered ID is a safe no-op.
-   *
-   * @param listenerId – The registration ID returned by `registerListener`.
-   * @returns A promise that resolves on success, or rejects with a platform
-   *          error when the native unregistration fails.
-   */
-  unregisterListener(listenerId: string): Promise<void>;
+	/**
+	 * Unregister a previously registered listener.
+	 *
+	 * Once resolved the listener will no longer receive key events. Calling
+	 * this with an unknown or already-unregistered ID is a safe no-op.
+	 *
+	 * @param listenerId – The registration ID returned by `registerListener`.
+	 * @returns A promise that resolves on success, or rejects with a platform
+	 *          error when the native unregistration fails.
+	 */
+	unregisterListener(listenerId: string): Promise<void>;
 
-  /**
-   * Query the set of hardware key codes the current device reports as
-   * supported.
-   *
-   * This is useful for feature detection (e.g. does this device have
-   * volume keys, a D-pad, or gamepad buttons?).
-   *
-   * @returns A promise that resolves with an array of `KeyCodeInfo` objects
-   *          for every key code the native layer exposes, or rejects with a
-   *          platform error when the query itself fails.
-   */
-  getSupportedKeyCodes(): Promise<ReadonlyArray<KeyCodeInfo>>;
+	/**
+	 * Query the set of hardware key codes the current device reports as
+	 * supported.
+	 *
+	 * This is useful for feature detection (e.g. does this device have
+	 * volume keys, a D-pad, or gamepad buttons?).
+	 *
+	 * @returns A promise that resolves with an array of `KeyCodeInfo` objects
+	 *          for every key code the native layer exposes, or rejects with a
+	 *          platform error when the query itself fails.
+	 */
+	getSupportedKeyCodes(): Promise<ReadonlyArray<KeyCodeInfo>>;
 
-  /**
-   * Fires for every hardware key event that matches any currently registered
-   * listener.
-   *
-   * The payload includes a `listenerId` field so consumers can route events
-   * to the correct handler.
-   *
-   * Errors during event delivery are surfaced through the promise rejections
-   * of the registration methods (`registerListener` /
-   * `unregisterListener`) — there is no separate error event emitter.
-   */
-  onKeyEvent: EventEmitter<KeyEvent>;
+	/**
+	 * Fires for every hardware key event that matches any currently registered
+	 * listener.
+	 *
+	 * The payload includes a `listenerId` field so consumers can route events
+	 * to the correct handler.
+	 *
+	 * Errors during event delivery are surfaced through the promise rejections
+	 * of the registration methods (`registerListener` /
+	 * `unregisterListener`) — there is no separate error event emitter.
+	 */
+	onKeyEvent: EventEmitter<KeyEvent>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('HardwareKeyEvent');

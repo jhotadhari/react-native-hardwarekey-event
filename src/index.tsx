@@ -12,8 +12,8 @@ export { KeyCode, ALL_KEY_CODES, isKeyCode, keyCodeToName } from './keycodes';
 // React hook (primary public API)
 // ---------------------------------------------------------------------------
 export {
-  useHardwareKeyEvent,
-  useSupportedKeyCodes,
+	useHardwareKeyEvent,
+	useSupportedKeyCodes,
 } from './useHardwareKeyEvent';
 
 // ---------------------------------------------------------------------------
@@ -26,15 +26,15 @@ export { registerHardwareKeyEvent } from './useHardwareKeyEvent';
 // ---------------------------------------------------------------------------
 export type { KeyCode as KeyCodeType } from './keycodes';
 export type {
-  UseHardwareKeyEventOptions,
-  UseHardwareKeyEventResult,
-  RegisterHardwareKeyEventOptions,
-  HardwareKeyEventListener,
+	UseHardwareKeyEventOptions,
+	UseHardwareKeyEventResult,
+	RegisterHardwareKeyEventOptions,
+	HardwareKeyEventListener,
 } from './useHardwareKeyEvent';
 export type {
-  KeyEvent,
-  KeyAction,
-  KeyCodeInfo,
-  RegisterListenerParams,
-  RegisterListenerResponse,
+	KeyEvent,
+	KeyAction,
+	KeyCodeInfo,
+	RegisterListenerParams,
+	RegisterListenerResponse,
 } from './NativeHardwareKeyEvent';

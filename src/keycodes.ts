@@ -22,84 +22,84 @@
  */
 
 export const KeyCode = {
-  // ── Volume ──────────────────────────────────────────────────────────
-  VOLUME_UP: 'KEYCODE_VOLUME_UP',
-  VOLUME_DOWN: 'KEYCODE_VOLUME_DOWN',
-  VOLUME_MUTE: 'KEYCODE_VOLUME_MUTE',
+	// ── Volume ──────────────────────────────────────────────────────────
+	VOLUME_UP: 'KEYCODE_VOLUME_UP',
+	VOLUME_DOWN: 'KEYCODE_VOLUME_DOWN',
+	VOLUME_MUTE: 'KEYCODE_VOLUME_MUTE',
 
-  // ── Navigation / System ────────────────────────────────────────────
-  HOME: 'KEYCODE_HOME',
-  BACK: 'KEYCODE_BACK',
-  MENU: 'KEYCODE_MENU',
-  APP_SWITCH: 'KEYCODE_APP_SWITCH',
-  SEARCH: 'KEYCODE_SEARCH',
-  NOTIFICATION: 'KEYCODE_NOTIFICATION',
+	// ── Navigation / System ────────────────────────────────────────────
+	HOME: 'KEYCODE_HOME',
+	BACK: 'KEYCODE_BACK',
+	MENU: 'KEYCODE_MENU',
+	APP_SWITCH: 'KEYCODE_APP_SWITCH',
+	SEARCH: 'KEYCODE_SEARCH',
+	NOTIFICATION: 'KEYCODE_NOTIFICATION',
 
-  // ── Call ────────────────────────────────────────────────────────────
-  CALL: 'KEYCODE_CALL',
-  ENDCALL: 'KEYCODE_ENDCALL',
-  HEADSETHOOK: 'KEYCODE_HEADSETHOOK',
+	// ── Call ────────────────────────────────────────────────────────────
+	CALL: 'KEYCODE_CALL',
+	ENDCALL: 'KEYCODE_ENDCALL',
+	HEADSETHOOK: 'KEYCODE_HEADSETHOOK',
 
-  // ── Camera ──────────────────────────────────────────────────────────
-  CAMERA: 'KEYCODE_CAMERA',
-  FOCUS: 'KEYCODE_FOCUS',
+	// ── Camera ──────────────────────────────────────────────────────────
+	CAMERA: 'KEYCODE_CAMERA',
+	FOCUS: 'KEYCODE_FOCUS',
 
-  // ── Power / Wake ────────────────────────────────────────────────────
-  POWER: 'KEYCODE_POWER',
-  SLEEP: 'KEYCODE_SLEEP',
-  WAKEUP: 'KEYCODE_WAKEUP',
+	// ── Power / Wake ────────────────────────────────────────────────────
+	POWER: 'KEYCODE_POWER',
+	SLEEP: 'KEYCODE_SLEEP',
+	WAKEUP: 'KEYCODE_WAKEUP',
 
-  // ── Media ───────────────────────────────────────────────────────────
-  MEDIA_PLAY: 'KEYCODE_MEDIA_PLAY',
-  MEDIA_PAUSE: 'KEYCODE_MEDIA_PAUSE',
-  MEDIA_PLAY_PAUSE: 'KEYCODE_MEDIA_PLAY_PAUSE',
-  MEDIA_STOP: 'KEYCODE_MEDIA_STOP',
-  MEDIA_NEXT: 'KEYCODE_MEDIA_NEXT',
-  MEDIA_PREVIOUS: 'KEYCODE_MEDIA_PREVIOUS',
-  MEDIA_REWIND: 'KEYCODE_MEDIA_REWIND',
-  MEDIA_FAST_FORWARD: 'KEYCODE_MEDIA_FAST_FORWARD',
-  MEDIA_RECORD: 'KEYCODE_MEDIA_RECORD',
+	// ── Media ───────────────────────────────────────────────────────────
+	MEDIA_PLAY: 'KEYCODE_MEDIA_PLAY',
+	MEDIA_PAUSE: 'KEYCODE_MEDIA_PAUSE',
+	MEDIA_PLAY_PAUSE: 'KEYCODE_MEDIA_PLAY_PAUSE',
+	MEDIA_STOP: 'KEYCODE_MEDIA_STOP',
+	MEDIA_NEXT: 'KEYCODE_MEDIA_NEXT',
+	MEDIA_PREVIOUS: 'KEYCODE_MEDIA_PREVIOUS',
+	MEDIA_REWIND: 'KEYCODE_MEDIA_REWIND',
+	MEDIA_FAST_FORWARD: 'KEYCODE_MEDIA_FAST_FORWARD',
+	MEDIA_RECORD: 'KEYCODE_MEDIA_RECORD',
 
-  // ── D-Pad ───────────────────────────────────────────────────────────
-  DPAD_UP: 'KEYCODE_DPAD_UP',
-  DPAD_DOWN: 'KEYCODE_DPAD_DOWN',
-  DPAD_LEFT: 'KEYCODE_DPAD_LEFT',
-  DPAD_RIGHT: 'KEYCODE_DPAD_RIGHT',
-  DPAD_CENTER: 'KEYCODE_DPAD_CENTER',
+	// ── D-Pad ───────────────────────────────────────────────────────────
+	DPAD_UP: 'KEYCODE_DPAD_UP',
+	DPAD_DOWN: 'KEYCODE_DPAD_DOWN',
+	DPAD_LEFT: 'KEYCODE_DPAD_LEFT',
+	DPAD_RIGHT: 'KEYCODE_DPAD_RIGHT',
+	DPAD_CENTER: 'KEYCODE_DPAD_CENTER',
 
-  // ── Channel / Program ───────────────────────────────────────────────
-  CHANNEL_UP: 'KEYCODE_CHANNEL_UP',
-  CHANNEL_DOWN: 'KEYCODE_CHANNEL_DOWN',
+	// ── Channel / Program ───────────────────────────────────────────────
+	CHANNEL_UP: 'KEYCODE_CHANNEL_UP',
+	CHANNEL_DOWN: 'KEYCODE_CHANNEL_DOWN',
 
-  // ── Text Navigation ─────────────────────────────────────────────────
-  PAGE_UP: 'KEYCODE_PAGE_UP',
-  PAGE_DOWN: 'KEYCODE_PAGE_DOWN',
-  MOVE_HOME: 'KEYCODE_MOVE_HOME',
-  MOVE_END: 'KEYCODE_MOVE_END',
+	// ── Text Navigation ─────────────────────────────────────────────────
+	PAGE_UP: 'KEYCODE_PAGE_UP',
+	PAGE_DOWN: 'KEYCODE_PAGE_DOWN',
+	MOVE_HOME: 'KEYCODE_MOVE_HOME',
+	MOVE_END: 'KEYCODE_MOVE_END',
 
-  // ── Basic Input ─────────────────────────────────────────────────────
-  ENTER: 'KEYCODE_ENTER',
-  DEL: 'KEYCODE_DEL',
-  FORWARD_DEL: 'KEYCODE_FORWARD_DEL',
-  TAB: 'KEYCODE_TAB',
-  SPACE: 'KEYCODE_SPACE',
-  ESCAPE: 'KEYCODE_ESCAPE',
+	// ── Basic Input ─────────────────────────────────────────────────────
+	ENTER: 'KEYCODE_ENTER',
+	DEL: 'KEYCODE_DEL',
+	FORWARD_DEL: 'KEYCODE_FORWARD_DEL',
+	TAB: 'KEYCODE_TAB',
+	SPACE: 'KEYCODE_SPACE',
+	ESCAPE: 'KEYCODE_ESCAPE',
 
-  // ── TV / Set-top box ────────────────────────────────────────────────
-  TV: 'KEYCODE_TV',
-  GUIDE: 'KEYCODE_GUIDE',
-  DVR: 'KEYCODE_DVR',
-  INFO: 'KEYCODE_INFO',
-  SETTINGS: 'KEYCODE_SETTINGS',
-  CAPTIONS: 'KEYCODE_CAPTIONS',
+	// ── TV / Set-top box ────────────────────────────────────────────────
+	TV: 'KEYCODE_TV',
+	GUIDE: 'KEYCODE_GUIDE',
+	DVR: 'KEYCODE_DVR',
+	INFO: 'KEYCODE_INFO',
+	SETTINGS: 'KEYCODE_SETTINGS',
+	CAPTIONS: 'KEYCODE_CAPTIONS',
 
-  // ── Assistants ──────────────────────────────────────────────────────
-  ASSIST: 'KEYCODE_ASSIST',
-  VOICE_ASSIST: 'KEYCODE_VOICE_ASSIST',
+	// ── Assistants ──────────────────────────────────────────────────────
+	ASSIST: 'KEYCODE_ASSIST',
+	VOICE_ASSIST: 'KEYCODE_VOICE_ASSIST',
 
-  // ── Zoom ────────────────────────────────────────────────────────────
-  ZOOM_IN: 'KEYCODE_ZOOM_IN',
-  ZOOM_OUT: 'KEYCODE_ZOOM_OUT',
+	// ── Zoom ────────────────────────────────────────────────────────────
+	ZOOM_IN: 'KEYCODE_ZOOM_IN',
+	ZOOM_OUT: 'KEYCODE_ZOOM_OUT',
 } as const;
 
 /**
@@ -117,7 +117,7 @@ export type KeyCode = (typeof KeyCode)[keyof typeof KeyCode];
  * (e.g. for feature detection or testing).
  */
 export const ALL_KEY_CODES: readonly KeyCode[] = Object.values(
-  KeyCode
+	KeyCode
 ) as readonly KeyCode[];
 
 /**
@@ -126,12 +126,12 @@ export const ALL_KEY_CODES: readonly KeyCode[] = Object.values(
  * (`"VOLUME_UP"`) or `undefined` when the string is unknown.
  */
 export function keyCodeToName(keyCodeString: string): string | undefined {
-  for (const [name, value] of Object.entries(KeyCode)) {
-    if (value === keyCodeString) {
-      return name;
-    }
-  }
-  return undefined;
+	for (const [name, value] of Object.entries(KeyCode)) {
+		if (value === keyCodeString) {
+			return name;
+		}
+	}
+	return undefined;
 }
 
 /**
@@ -139,5 +139,5 @@ export function keyCodeToName(keyCodeString: string): string | undefined {
  * `KeyCode` constants.
  */
 export function isKeyCode(value: string): value is KeyCode {
-  return (ALL_KEY_CODES as readonly string[]).includes(value);
+	return (ALL_KEY_CODES as readonly string[]).includes(value);
 }
