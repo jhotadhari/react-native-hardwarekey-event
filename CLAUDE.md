@@ -32,8 +32,6 @@ src/
 ├── NativeHardwareKeyEvent.ts    # TurboModule spec + registry lookup
 ├── keycodes.ts                  # 51 type-safe KeyCode constants + type guard
 ├── useHardwareKeyEvent.ts       # main hook + imperative API + feature-detection hook
-└── backcompat/
-    └── useHardwareKeyEvent.ts   # v0.0.x → v1.0.0 compat shim (import from ./compat)
 ```
 
 - **`NativeHardwareKeyEvent.ts`** defines the TurboModule spec (`Spec` interface) with:
@@ -47,7 +45,6 @@ src/
   - `useHardwareKeyEvent({ keys, onKeyDown?, onKeyUp?, onLongPress?, longPressTimeout?, enabled? })` → `{ isRegistered, error }`. Uses refs for callback stability, a sorted-key fingerprint to avoid spurious re-registrations, a `createLongPressTracker` state machine, and cancellation-handling for in-flight registrations.
   - `registerHardwareKeyEvent(options)` — imperative (non-React) API returning `{ listenerId, unregister }`.
   - `useSupportedKeyCodes()` — feature-detection hook calling `getSupportedKeyCodes()` on mount.
-- **`backcompat/useHardwareKeyEvent.ts`** maps the old `{ callbacks, onError }` API to the new `registerListener` + `onKeyEvent` primitives. Emits `console.warn` in `__DEV__`. Exposed via the `./compat` export path. Will be removed in v2.0.0.
 
 ### Android native layer
 

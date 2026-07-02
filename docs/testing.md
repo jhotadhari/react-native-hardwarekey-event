@@ -95,7 +95,6 @@ Run through these scenarios on a real Android device before releasing:
 - [ ] Rapid register/unregister cycling does not leak listeners or crash
 - [ ] Killing the app while a listener is registered does not leave the audio session active (iOS)
 - [ ] `useSupportedKeyCodes` returns a non-empty array on the test device
-- [ ] Compat wrapper (`./compat` import) emits a deprecation warning in dev and functions correctly
 
 ### Platform-specific
 

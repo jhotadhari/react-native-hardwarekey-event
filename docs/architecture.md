@@ -251,14 +251,6 @@ Derives:
 - `keyCodeToName(keyCodeString)` — linear scan of `Object.entries` for reverse
   lookup.
 
-### `backcompat/useHardwareKeyEvent.ts`
-
-**File:** `src/backcompat/useHardwareKeyEvent.ts`
-
-Compatibility shim mapping the old `0.0.x` API to the new primitives. Exposed
-via the `./compat` export path. Emits a `console.warn` in `__DEV__`. Will be
-removed in v2.0.0.
-
 ---
 
 ## iOS layer

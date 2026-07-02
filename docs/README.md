@@ -54,7 +54,6 @@ Human-readable architecture doc (complements the AI-focused `CLAUDE.md`):
   - `NativeHardwareKeyEvent.ts` — TurboModule spec + codegen contract
   - `useHardwareKeyEvent.ts` — hook, long-press state machine, stable refs, fingerprint dedup
   - `keycodes.ts` — const object, type guard, reverse lookup
-  - `backcompat/` — compat shim internals
 - **iOS layer** — KVO-based volume observation, singleton, dual-architecture emission
 - **Multi-listener design** — why `LinkedHashMap`, why per-listener interceptor, how events fan-out
 

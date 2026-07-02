@@ -10,11 +10,7 @@
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
-    "./package.json": "./package.json",
-    "./compat": {
-      "types": "./lib/typescript/src/backcompat/useHardwareKeyEvent.d.ts",
-      "default": "./lib/module/backcompat/useHardwareKeyEvent.js"
-    }
+    "./package.json": "./package.json"
   },
   "files": [
     "src",

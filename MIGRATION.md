@@ -11,18 +11,17 @@ support, and built-in long-press detection.
 ## Table of Contents
 
 1. [Versioning Strategy](#1-versioning-strategy)
-2. [Backward Compatibility Layer](#2-backward-compatibility-layer)
-3. [Step-by-Step Migration Guide](#3-step-by-step-migration-guide)
-   - [3.1 Remove Activity Inheritance](#31-remove-activity-inheritance)
-   - [3.2 Update the Hook Call Signature](#32-update-the-hook-call-signature)
-   - [3.3 Switch from Raw Key-Code Strings to the `KeyCode` Enum](#33-switch-from-raw-key-code-strings-to-the-keycode-enum)
-   - [3.4 Replace Direct Module Usage](#34-replace-direct-module-usage)
-   - [3.5 Update Error Handling](#35-update-error-handling)
-   - [3.6 Adopt the Richer `KeyEvent` Payload](#36-adopt-the-richer-keyevent-payload)
-4. [Breaking Changes Summary](#4-breaking-changes-summary)
-5. [Automated Codemod Candidates](#5-automated-codemod-candidates)
-6. [Documentation Updates Needed](#6-documentation-updates-needed)
-7. [Example App Update Plan](#7-example-app-update-plan)
+2. [Step-by-Step Migration Guide](#2-step-by-step-migration-guide)
+   - [2.1 Remove Activity Inheritance](#21-remove-activity-inheritance)
+   - [2.2 Update the Hook Call Signature](#22-update-the-hook-call-signature)
+   - [2.3 Switch from Raw Key-Code Strings to the `KeyCode` Enum](#23-switch-from-raw-key-code-strings-to-the-keycode-enum)
+   - [2.4 Replace Direct Module Usage](#24-replace-direct-module-usage)
+   - [2.5 Update Error Handling](#25-update-error-handling)
+   - [2.6 Adopt the Richer `KeyEvent` Payload](#26-adopt-the-richer-keyevent-payload)
+3. [Breaking Changes Summary](#3-breaking-changes-summary)
+4. [Automated Codemod Candidates](#4-automated-codemod-candidates)
+5. [Documentation Updates Needed](#5-documentation-updates-needed)
+6. [Example App Update Plan](#6-example-app-update-plan)
 
 ---
 
@@ -31,76 +30,19 @@ support, and built-in long-press detection.
 | Aspect | Decision |
 |---|---|
 | **Semver bump** | **Major** — `1.0.0`.  Every public API surface changes.  TypeScript signatures are incompatible; the native registration mechanism is completely replaced; the Activity contract is removed. |
-| **Deprecation timeline** | No transitional release.  The old API is **removed** in 1.0.0.  A compatibility wrapper (see section 2) is shipped as a separate, optional import so existing callers can upgrade the package version without rewriting every callsite on day one. |
+| **Deprecation timeline** | The old API is **removed** in 1.0.0. A compatibility wrapper was shipped as a separate import (`./compat`) through the 1.x line and removed in 2.0.0. |
 | **Pre-release channel** | Publish `1.0.0-rc.0` first.  Let it bake for at least 2 weeks while the community tests the migration guide before cutting the stable `1.0.0`. |
 | **Branch strategy** | Maintain a `0.x` branch for critical bugfixes to the legacy API until `1.0.0` is stable and widely adopted. |
 
 ---
 
-## 2. Backward Compatibility Layer
+## 2. Step-by-Step Migration Guide
 
-A **compatibility wrapper** is provided at a separate import path so existing callers
-can upgrade the package version without immediately rewriting every callsite:
+> **Note:** A backward-compatibility wrapper (`react-native-hardwarekey-event/compat`)
+> was available in v1.x but has been removed in v2.0.0. If you still rely on the old
+> `{ callbacks, onError }` API, migrate to the new hook signature described below.
 
-```ts
-import { useHardwareKeyEvent } from 'react-native-hardwarekey-event/compat';
-```
-
-### What the wrapper does
-
-The wrapper translates the old call signature into the new native registration
-primitives:
-
-```ts
-// Old API (v0.0.x)
-useHardwareKeyEvent({
-  callbacks: {
-    'KEYCODE_VOLUME_UP': (response) => { /* ... */ },
-    'KEYCODE_VOLUME_DOWN': (response) => { /* ... */ },
-  },
-  onError: (error) => { /* ... */ },
-});
-```
-
-is internally translated to:
-
-```ts
-// New API (v1.0.0) — done automatically by the wrapper
-useHardwareKeyEvent({
-  keys: [KeyCode.VOLUME_UP, KeyCode.VOLUME_DOWN],
-  onKeyDown: (event) => {
-    const cb = callbacks[event.keyCodeString];
-    cb?.(event); // KeyEvent is a superset of KeyEventResponse
-  },
-  onKeyUp: (event) => {
-    const cb = callbacks[event.keyCodeString];
-    cb?.(event);
-  },
-  // onError flows into the hook's error result
-});
-```
-
-### Wrapper limitations (by design)
-
-| Limitation | Rationale |
-|---|---|
-| Only `onKeyDown` dispatch (no `onKeyUp`, no `onLongPress`) | The old API callback was fired on every key event; the compat wrapper fires on *every* action (down, up, multiple) to match the old behaviour. |
-| `onError` fires once per registration error, not streaming | The old `onError` callback received a live emitter; the compat wrapper captures the first error from `useHardwareKeyEvent(...).error`. |
-| No `listenerId` exposed | The old API had a single implicit listener. |
-| Deprecation warning on `console.warn` in development | Each call to the compat layer logs a warning so teams can track unmigrated callsites. |
-
-### Deprecation intention
-
-The compatibility wrapper lives **only** through the `1.x` line.  It will be removed in
-`2.0.0`.  Teams should treat the wrapper as a temporary bridge — migrate each callsite
-to the new API as soon as practical, using the console warning emitted in development
-builds to find remaining occurrences.
-
----
-
-## 3. Step-by-Step Migration Guide
-
-### 3.1 Remove Activity Inheritance
+### 2.1 Remove Activity Inheritance
 
 This is the **first** and **most impactful** change, because it touches native
 (Android) code rather than JavaScript.
@@ -176,7 +118,7 @@ npx react-native run-android
 
 ---
 
-### 3.2 Update the Hook Call Signature
+### 2.2 Update the Hook Call Signature
 
 #### Before (0.0.x)
 
@@ -258,7 +200,7 @@ useHardwareKeyEvent({
 
 ---
 
-### 3.3 Switch from Raw Key-Code Strings to the `KeyCode` Enum
+### 2.3 Switch from Raw Key-Code Strings to the `KeyCode` Enum
 
 The old API used raw string literals like `'KEYCODE_VOLUME_UP'`.  The new API
 provides a type-safe `KeyCode` enum.
@@ -329,7 +271,7 @@ function toKeyCode(raw: string): KeyCode | null {
 
 ---
 
-### 3.4 Replace Direct Module Usage
+### 2.4 Replace Direct Module Usage
 
 If your code imported `HardwareKeyEvent` directly (the TurboModule), you must
 update to the new method signatures.
@@ -430,7 +372,7 @@ function VolumeHandler() {
 
 ---
 
-### 3.5 Update Error Handling
+### 2.5 Update Error Handling
 
 #### Before (0.0.x)
 
@@ -486,7 +428,7 @@ if (!isRegistered) {
 
 ---
 
-### 3.6 Adopt the Richer `KeyEvent` Payload
+### 2.6 Adopt the Richer `KeyEvent` Payload
 
 The old `KeyEventResponse` carried only two fields:
 
@@ -542,7 +484,7 @@ useHardwareKeyEvent({
 
 ---
 
-## 4. Breaking Changes Summary
+## 3. Breaking Changes Summary
 
 ### Changes requiring manual migration
 
@@ -556,13 +498,13 @@ useHardwareKeyEvent({
 | 6 | **Remove `onError` event emitter usage** | No more `HardwareKeyEvent.onError()` — errors on `onKeyEvent` or promise rejections |
 | 7 | **Adopt multi-listener awareness** | If you called `useHardwareKeyEvent` multiple times, the old API only supported one listener; the new API supports many — each call is independent |
 
-### Changes that are automated via the compat wrapper
+### Changes that are automated via codemods
 
 | Change | Automation |
 |---|---|
-| `callbacks` → `keys` + `onKeyDown` | Wrapper maps the old object to the new args |
-| `onError` callback | Wrapper bridges to the hook's `error` state |
-| Raw strings → `KeyCode` enum | Wrapper accepts raw strings and passes them through |
+| `callbacks` → `keys` + `onKeyDown` | Codemod can transform the call signature |
+| `onError` callback | Codemod can bridge to the hook's `error` state |
+| Raw strings → `KeyCode` enum | Codemod can replace known string literals |
 | Activity inheritance | **Not automatable** — must be done manually |
 
 ### Removals (no replacement)
@@ -578,12 +520,12 @@ useHardwareKeyEvent({
 
 ---
 
-## 5. Automated Codemod Candidates
+## 4. Automated Codemod Candidates
 
 The following transformations are straightforward enough to automate with a
 jscodeshift codemod:
 
-### 5.1 Hook signature transform
+### 4.1 Hook signature transform
 
 ```ts
 // INPUT (0.0.x)
@@ -605,7 +547,7 @@ single `onKeyDown` that dispatches to the appropriate callback based on
 `event.keyCodeString`, annotated with an ESLint-disable comment and a
 `// TODO: split into separate onKeyDown/onKeyUp/onLongPress handlers` comment.
 
-### 5.2 Import transform
+### 4.2 Import transform
 
 ```ts
 // INPUT
@@ -615,7 +557,7 @@ import { useHardwareKeyEvent } from 'react-native-hardwarekey-event';
 import { useHardwareKeyEvent, KeyCode } from 'react-native-hardwarekey-event';
 ```
 
-### 5.3 String literal to KeyCode
+### 4.3 String literal to KeyCode
 
 ```ts
 // INPUT
@@ -641,7 +583,7 @@ The codemod **cannot** handle:
 
 ---
 
-## 6. Documentation Updates Needed
+## 5. Documentation Updates Needed
 
 | Document | Action |
 |---|---|
@@ -655,12 +597,12 @@ The codemod **cannot** handle:
 
 ---
 
-## 7. Example App Update Plan
+## 6. Example App Update Plan
 
 The example app (`example/`) currently still extends `HardwareKeyListenerActivity`
 and likely uses the old API.  Update it to:
 
-### 7.1 Android: remove Activity inheritance
+### 6.1 Android: remove Activity inheritance
 
 ```diff
 // example/android/app/src/main/java/.../MainActivity.kt
@@ -671,7 +613,7 @@ and likely uses the old API.  Update it to:
 + class MainActivity : ReactActivity() {
 ```
 
-### 7.2 JavaScript: update `App.tsx`
+### 6.2 JavaScript: update `App.tsx`
 
 Rewrite `App.tsx` to demonstrate **all** new features:
 
@@ -683,7 +625,7 @@ Rewrite `App.tsx` to demonstrate **all** new features:
 5. **Imperative API** example using `registerHardwareKeyEvent` outside React
 6. **Error state display** when `isRegistered` is false or `error` is set
 
-### 7.3 Example app structure (proposed)
+### 6.3 Example app structure (proposed)
 
 ```
 example/src/
@@ -697,7 +639,7 @@ example/src/
     ImperativeApiExample.tsx     # registerHardwareKeyEvent
 ```
 
-### 7.4 Testing checklist for the example app
+### 6.4 Testing checklist for the example app
 
 - [ ] App launches without `HardwareKeyListenerActivity`
 - [ ] Volume up/down presses are logged in the basic example

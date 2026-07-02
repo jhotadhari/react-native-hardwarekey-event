@@ -54,8 +54,6 @@ function VolumeButtonHandler() {
   `repeatCount`, `deviceId`, `flags`
 - **Feature detection** — `useSupportedKeyCodes()` queries device capabilities
 - **Imperative API** — use outside React (Redux sagas, vanilla JS services)
-- **Backward-compatible** — 0.0.x consumers can use the `./compat` import path
-  while migrating
 
 ## Documentation
 
@@ -124,12 +122,6 @@ Every callback receives a `KeyEvent`:
 | `deviceId` | `number` | Input device ID |
 | `flags` | `number` | KeyEvent flags bitmask |
 | `errorMsg` | `string \| undefined` | Error description (only when `action: "error"`) |
-
-## Migrating from 0.x
-
-A compat wrapper is available at `react-native-hardwarekey-event/compat`. It
-emits a deprecation warning in development and will be removed in v2.0.0. See
-the [Migration Guide](MIGRATION.md) for the full walkthrough.
 
 ## Contributing
 
