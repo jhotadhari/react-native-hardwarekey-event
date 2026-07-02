@@ -9639,30 +9639,24 @@ __metadata:
     "@eslint/eslintrc": ^3.3.0
     "@eslint/js": ^9.22.0
     "@evilmartians/lefthook": ^1.5.0
-    "@octokit/rest": ^22.0.1
     "@react-native-community/cli": 15.0.1
     "@react-native/eslint-config": ^0.78.0
     "@testing-library/react-native": ^14.0.1
     "@types/jest": ^29.5.5
     "@types/react": ^19.0.0
-    commander: ^15.0.0
     del-cli: ^5.1.0
     eslint: ^9.22.0
     eslint-config-prettier: ^10.1.8
     eslint-plugin-prettier: ^5.5.6
     jest: ^29.7.0
-    keep-a-changelog: ^3.0.5
-    picocolors: ^1.1.1
     prettier: ^3.8.4
     prettier-plugin-embed: ^0.5.1
     prettier-plugin-multiline-arrays: ^4.1.10
     react: 19.0.0
     react-native: 0.78.2
     react-native-builder-bob: ^0.40.6
-    semver: ^7.8.5
-    simple-git: ^3.36.0
+    release-kit: "file:.yalc/release-kit"
     test-renderer: ^1.2.0
-    tsx: ^4.22.4
     turbo: ^1.10.7
     typescript: ^5.2.2
   peerDependencies:
@@ -9935,6 +9929,23 @@ __metadata:
   bin:
     regjsparser: bin/parser
   checksum: 094b55b0ab3e1fd58f8ce5132a1d44dab08d91f7b0eea4132b0157b303ebb8ded20a9cbd893d25402d2aeddb23fac1f428ab4947b295d6fa51dd1c334a9e76f0
+  languageName: node
+  linkType: hard
+
+"release-kit@file:.yalc/release-kit::locator=react-native-hardwarekey-event%40workspace%3A.":
+  version: 0.0.1
+  resolution: "release-kit@file:.yalc/release-kit#.yalc/release-kit::hash=c2031d&locator=react-native-hardwarekey-event%40workspace%3A."
+  dependencies:
+    "@octokit/rest": ^22.0.1
+    commander: ^15.0.0
+    keep-a-changelog: ^3.0.5
+    picocolors: ^1.1.1
+    semver: ^7.8.5
+    simple-git: ^3.36.0
+    tsx: ^4.22.4
+  bin:
+    release-kit: ./bin/release-kit.js
+  checksum: ce6c6490b3f75c900abf613ebc55deceec1ee8a401c9c1035cf803a7b767ff61b7754335beae3a92eab7b26ecd21e98e456643f21b7023aea3293a585acf1173
   languageName: node
   linkType: hard
 

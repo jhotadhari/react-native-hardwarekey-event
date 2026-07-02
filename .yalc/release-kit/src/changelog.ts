@@ -2,22 +2,29 @@ import { readFileSync, writeFileSync } from 'fs';
 import pc from 'picocolors';
 import { parser, Release } from 'keep-a-changelog';
 import type { Changelog } from 'keep-a-changelog';
-import { CHANGELOG_PATH, GITHUB_REPO_URL } from './constants';
 import { fatalError } from './checks';
 
-export function readChangelog(): Changelog {
-	const content = readFileSync(CHANGELOG_PATH, 'utf-8');
+export function readChangelog(changelogPath: string): Changelog {
+	const content = readFileSync(changelogPath, 'utf-8');
 	return parser(content, { autoSortReleases: true });
 }
 
-export function writeChangelog(changelog: Changelog): void {
-	changelog.url = GITHUB_REPO_URL;
+export function writeChangelog(
+	changelog: Changelog,
+	changelogPath: string,
+	repoUrl: string
+): void {
+	changelog.url = repoUrl;
 	changelog.format = 'markdownlint';
-	writeFileSync(CHANGELOG_PATH, changelog.toString(), 'utf-8');
+	writeFileSync(changelogPath, changelog.toString(), 'utf-8');
 }
 
-export function releaseChangelog(version: string): void {
-	const changelog = readChangelog();
+export function releaseChangelog(
+	version: string,
+	changelogPath: string,
+	repoUrl: string
+): void {
+	const changelog = readChangelog(changelogPath);
 
 	const unreleased = changelog.releases.find((r) => !r.version);
 	if (!unreleased) {
@@ -27,19 +34,25 @@ export function releaseChangelog(version: string): void {
 	unreleased.setVersion(version);
 	unreleased.setDate(new Date());
 
-	writeChangelog(changelog);
+	writeChangelog(changelog, changelogPath, repoUrl);
 	console.log(pc.green(`Released changelog: [Unreleased] → [${version}]`));
 }
 
-export function addUnreleasedSection(): void {
-	const changelog = readChangelog();
+export function addUnreleasedSection(
+	changelogPath: string,
+	repoUrl: string
+): void {
+	const changelog = readChangelog(changelogPath);
 	changelog.addRelease(new Release());
-	writeChangelog(changelog);
+	writeChangelog(changelog, changelogPath, repoUrl);
 	console.log(pc.green('Added [Unreleased] section to CHANGELOG.md'));
 }
 
-export function extractReleaseBody(version: string): string {
-	const changelog = readChangelog();
+export function extractReleaseBody(
+	version: string,
+	changelogPath: string
+): string {
+	const changelog = readChangelog(changelogPath);
 	const release = changelog.findRelease(version);
 	if (!release) {
 		fatalError(`Cannot find release ${version} in CHANGELOG.md`);

@@ -1,20 +1,23 @@
 import { execSync } from 'child_process';
 import pc from 'picocolors';
-import { ROOT } from './constants';
 import { fatalError } from './checks';
 import { getNpmTag } from './version';
 
-export function runBuild(): void {
-	console.log(pc.blue('Building library (yarn prepare)…'));
+export function runBuild(command: string, root: string): void {
+	console.log(pc.blue(`Building (${command})…`));
 	try {
-		execSync('yarn prepare', { stdio: 'inherit', cwd: ROOT });
+		execSync(command, { stdio: 'inherit', cwd: root });
 	} catch {
 		fatalError('Build failed. Fix build errors before publishing.');
 	}
 	console.log(pc.green('Build completed'));
 }
 
-export function npmPublish(version: string, dryRun: boolean): void {
+export function npmPublish(
+	version: string,
+	dryRun: boolean,
+	root: string
+): void {
 	const tag = getNpmTag(version);
 	const args: string[] = ['publish'];
 	if (tag) args.push('--tag', tag);
@@ -25,7 +28,10 @@ export function npmPublish(version: string, dryRun: boolean): void {
 	console.log(pc.blue(`${label}${tagLabel}…`));
 
 	try {
-		execSync('npm ' + args.join(' '), { stdio: 'inherit', cwd: ROOT });
+		execSync('npm ' + args.join(' '), {
+			stdio: 'inherit',
+			cwd: root,
+		});
 	} catch {
 		fatalError('npm publish failed');
 	}

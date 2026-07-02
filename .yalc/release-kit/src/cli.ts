@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import semver from 'semver';
-import { fatalError } from './checks';
+import pc from 'picocolors';
 
 export function parseArgs(): {
 	version: string;
@@ -10,8 +10,8 @@ export function parseArgs(): {
 } {
 	const program = new Command();
 	program
-		.name('yarn release')
-		.description('Publish a new release of the library')
+		.name('release-kit')
+		.description('Publish a new release')
 		.argument('<version>', 'SemVer version (e.g., 1.0.0, 1.0.0-alpha.1)')
 		.option('--dry-run', 'Validate only, skip all mutations')
 		.option('--no-test', 'Skip tests pre-flight')
@@ -21,11 +21,14 @@ export function parseArgs(): {
 
 	const version = program.args[0]!;
 	if (!semver.valid(version)) {
-		fatalError(
-			'Version should be valid SemVer. ' +
-				'Run `yarn release <major>.<minor>.<patch>` ' +
-				'(pre-release tags like alpha/beta/rc are supported, e.g. `1.0.0-alpha.1`)'
+		console.error(
+			pc.red(
+				'Version should be valid SemVer. ' +
+					'Run `release-kit <major>.<minor>.<patch>` ' +
+					'(pre-release tags like alpha/beta/rc are supported, e.g. `1.0.0-alpha.1`)'
+			)
 		);
+		process.exit(1);
 	}
 
 	const opts = program.opts();

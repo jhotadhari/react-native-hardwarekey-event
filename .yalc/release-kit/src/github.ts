@@ -1,7 +1,5 @@
-import { execSync } from 'child_process';
 import pc from 'picocolors';
 import { Octokit } from '@octokit/rest';
-import { ROOT } from './constants';
 import { fatalError } from './checks';
 import { extractReleaseBody } from './changelog';
 
@@ -10,41 +8,30 @@ interface RepoInfo {
 	repo: string;
 }
 
-function getRepoInfo(): RepoInfo {
-	const remoteUrl = execSync('git remote get-url origin', {
-		encoding: 'utf-8',
-		cwd: ROOT,
-	}).trim();
-
-	// git@github.com:owner/repo.git (scp-style SSH)
-	const sshMatch = remoteUrl.match(/git@github\.com:([^/]+)\/(.+?)\.git$/);
-	if (sshMatch) {
-		return { owner: sshMatch[1]!, repo: sshMatch[2]! };
-	}
-
-	// ssh://git@github.com/owner/repo.git (standard SSH protocol)
-	const sshProtocolMatch = remoteUrl.match(
-		/ssh:\/\/git@github\.com\/([^/]+)\/(.+?)(?:\.git)?$/
-	);
-	if (sshProtocolMatch) {
-		return {
-			owner: sshProtocolMatch[1]!,
-			repo: sshProtocolMatch[2]!.replace(/\.git$/, ''),
-		};
-	}
-
-	// https://github.com/owner/repo.git
-	const httpsMatch = remoteUrl.match(
-		/https?:\/\/github\.com\/([^/]+)\/(.+?)(?:\.git)?$/
+function parseRepoUrl(repoUrl: string): RepoInfo {
+	// https://github.com/owner/repo
+	const httpsMatch = repoUrl.match(
+		/https?:\/\/github\.com\/([^/]+)\/(.+?)(?:\.git)?\/?\s*$/
 	);
 	if (httpsMatch) {
 		return {
 			owner: httpsMatch[1]!,
-			repo: httpsMatch[2]!.replace(/\.git$/, ''),
+			repo: httpsMatch[2]!.replace(/\.git$/, '').replace(/\/$/, ''),
 		};
 	}
 
-	fatalError('Could not parse GitHub owner/repo from git remote origin');
+	// Fallback: treat as owner/repo
+	const slashMatch = repoUrl.match(/^([^/]+)\/(.+)$/);
+	if (slashMatch) {
+		return { owner: slashMatch[1]!, repo: slashMatch[2]! };
+	}
+
+	fatalError(
+		'Could not parse GitHub owner/repo from: ' +
+			repoUrl +
+			'. ' +
+			'Use a full https:// URL or owner/repo format.'
+	);
 }
 
 async function findReleaseByTag(
@@ -73,7 +60,11 @@ async function findReleaseByTag(
 	}
 }
 
-export async function createGitHubRelease(version: string): Promise<void> {
+export async function createGitHubRelease(
+	version: string,
+	repoUrl: string,
+	changelogPath: string
+): Promise<void> {
 	const token = process.env.GITHUB_TOKEN;
 	if (!token) {
 		fatalError(
@@ -84,9 +75,9 @@ export async function createGitHubRelease(version: string): Promise<void> {
 	}
 
 	const octokit = new Octokit({ auth: token });
-	const { owner, repo } = getRepoInfo();
-	const tagName = `v${version}`;
-	const body = extractReleaseBody(version);
+	const { owner, repo } = parseRepoUrl(repoUrl);
+	const tagName = 'v' + version;
+	const body = extractReleaseBody(version, changelogPath);
 
 	const existingRelease = await findReleaseByTag(
 		octokit,
@@ -105,7 +96,7 @@ export async function createGitHubRelease(version: string): Promise<void> {
 			body,
 			draft: false,
 		});
-		console.log(pc.green(`Updated GitHub release: ${tagName}`));
+		console.log(pc.green('Updated GitHub release: ' + tagName));
 	} else {
 		await octokit.rest.repos.createRelease({
 			owner,
@@ -115,6 +106,6 @@ export async function createGitHubRelease(version: string): Promise<void> {
 			body,
 			draft: false,
 		});
-		console.log(pc.green(`Created GitHub release: ${tagName}`));
+		console.log(pc.green('Created GitHub release: ' + tagName));
 	}
 }
