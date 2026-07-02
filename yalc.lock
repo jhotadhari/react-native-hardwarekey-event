@@ -3,7 +3,7 @@
   "packages": {
     "release-kit": {
       "signature": "80bcb5ad8ffad1a5cd9d3b3706631654",
-      "file": true
+      "pure": true
     }
   }
 }

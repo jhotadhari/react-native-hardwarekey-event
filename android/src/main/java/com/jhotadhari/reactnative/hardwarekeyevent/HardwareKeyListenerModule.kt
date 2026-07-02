@@ -152,7 +152,7 @@ class HardwareKeyListenerModule(
                 return
             }
 
-            val arr: ReadableArray = params.getArray("keyCodeStrings")
+            val arr: ReadableArray? = params.getArray("keyCodeStrings")
             if (arr == null) {
                 promise.reject(
                     "INVALID_PARAMS",
@@ -163,7 +163,7 @@ class HardwareKeyListenerModule(
 
             // Filter to only known key codes (silently discard unknowns).
             val filteredSet = (0 until arr.size())
-                .map { arr.getString(it) }
+                .mapNotNull { arr.getString(it) }
                 .filter { KeyCodeMapper.getKeyCodeInt(it) != -1 }
                 .toSet()
 
@@ -267,7 +267,6 @@ class HardwareKeyListenerModule(
                 var isSystem = false
                 try {
                     isGamepad = KeyEvent.isGamepadButton(keyCode)
-                    isSystem = KeyEvent.isSystemKey(keyCode)
                     val displayChar = kcm?.getDisplayLabel(keyCode) ?: 0.toChar()
                     if (displayChar != 0.toChar()) {
                         label = displayChar.toString()
