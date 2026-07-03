@@ -70,7 +70,7 @@
     "@eslint/js": "^9.22.0",
     "@evilmartians/lefthook": "^1.5.0",
     "@jest/globals": "^30.4.1",
-    "@jhotadhari/release-kit": "file:.yalc/@jhotadhari/release-kit",
+    "@jhotadhari/release-kit": "^0.0.6",
     "@react-native-community/cli": "15.0.1",
     "@react-native/eslint-config": "^0.86.0",
     "@react-native/jest-preset": "^0.86.0",
