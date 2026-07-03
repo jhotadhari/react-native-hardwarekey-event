@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-env node */
 
 const path = require('path');
 const tsx = require('tsx/cjs/api');

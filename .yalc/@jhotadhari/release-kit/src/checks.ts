@@ -40,10 +40,36 @@ export async function checkCleanWorkingTree(git: SimpleGit): Promise<void> {
 	}
 }
 
+export function checkGitHubToken(): void {
+	if (!process.env.GITHUB_TOKEN) {
+		fatalError(
+			'GITHUB_TOKEN environment variable is required to create a GitHub release. ' +
+				'Run `export GITHUB_TOKEN=$(gh auth token)` or generate one at ' +
+				'https://github.com/settings/tokens (scope: repo).'
+		);
+	}
+}
+
+export function checkNpmAuth(): void {
+	try {
+		const whoami = execSync('npm whoami', { encoding: 'utf-8' }).trim();
+		if (!whoami) {
+			fatalError(
+				'npm authentication required. Run `npm login` or `npm adduser` first.'
+			);
+		}
+		console.log(pc.green(`npm authenticated as ${whoami}`));
+	} catch {
+		fatalError(
+			'npm authentication required. Run `npm login` or `npm adduser` first.'
+		);
+	}
+}
+
 export function checkChangelogHasUnreleased(changelogPath: string): void {
 	const content = readFileSync(changelogPath, 'utf-8');
-	if (!/## \[?Unreleased\]?/.test(content)) {
-		fatalError('CHANGELOG.md should have a `[Unreleased]` section');
+	if (!/## \[?Unreleased\]?/i.test(content)) {
+		fatalError('CHANGELOG.md should have an `[Unreleased]` or `Unreleased` section');
 	}
 }
 

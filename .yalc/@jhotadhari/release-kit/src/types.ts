@@ -25,7 +25,7 @@ export interface ReleaseConfig {
 		path?: string;
 	};
 	publish?: {
-		npm?: boolean | { buildCommand?: string };
+		npm?: boolean | { buildCommand?: string | false };
 		github?: boolean;
 	};
 	versionCode?: VersionCodeConfig;

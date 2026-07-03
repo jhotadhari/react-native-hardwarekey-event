@@ -1,0 +1,36 @@
+{
+  "name": "@jhotadhari/release-kit",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "0.0.6",
+  "description": "Generic release pipeline for libraries and apps — bumps versions, manages changelogs, publishes to npm and GitHub",
+  "bin": "./bin/release-kit.js",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "bin"
+  ],
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "format": "prettier . --write",
+    "test": "tsx --test tests/**/*.test.ts"
+  },
+  "dependencies": {
+    "@octokit/rest": "^22.0.1",
+    "commander": "^15.0.0",
+    "keep-a-changelog": "^3.0.5",
+    "picocolors": "^1.1.1",
+    "semver": "^7.8.5",
+    "simple-git": "^3.36.0",
+    "tsx": "^4.22.4"
+  },
+  "packageManager": "yarn@3.6.1",
+  "yalcSig": "3bd24971cd7bf7119845a2727afcf472"
+}
