@@ -1,4 +1,4 @@
-import { fixupConfigRules } from '@eslint/compat';
+import { fixupConfigRules, includeIgnoreFile } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import prettier from 'eslint-plugin-prettier';
@@ -15,27 +15,21 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([
+  includeIgnoreFile(path.resolve(__dirname, '.prettierignore')),
   {
     extends: fixupConfigRules(compat.extends('@react-native', 'prettier')),
     plugins: { prettier },
     rules: {
       'react/react-in-jsx-scope': 'off',
-      'prettier/prettier': [
-        'error',
-        {
-          quoteProps: 'consistent',
-          singleQuote: true,
-          tabWidth: 2,
-          trailingComma: 'es5',
-          useTabs: false,
-        },
-      ],
+      // options come from .prettierrc, resolved by eslint-plugin-prettier
+      'prettier/prettier': 'error',
     },
   },
   {
     ignores: [
       'node_modules/',
-      'lib/'
+      'lib/',
+      '.yalc/',
     ],
   },
 ]);

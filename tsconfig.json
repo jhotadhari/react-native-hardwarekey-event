@@ -24,6 +24,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
+    "types": ["jest", "react", "node"],
     "verbatimModuleSyntax": true
-  }
+  },
+  "exclude": ["design", "example", "lib", "scripts"]
 }

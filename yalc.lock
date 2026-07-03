@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@jhotadhari/release-kit": {
+      "signature": "3bd24971cd7bf7119845a2727afcf472",
+      "file": true,
+      "replaced": "file:.yalc/release-kit"
+    }
+  }
+}

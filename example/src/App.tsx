@@ -1,49 +1,44 @@
 import { useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import {
-  useHardwareKeyEvent,
-  type KeyEventResponse,
-  type EventError,
-} from 'react-native-hardwarekey-event';
+import { useHardwareKeyEvent, KeyCode } from 'react-native-hardwarekey-event';
+import type { KeyEvent } from 'react-native-hardwarekey-event';
 
 export default function App() {
+	const [pressed, setPressed] = useState<null | string>(null);
 
-  const [pressed,setPressed] = useState<null | string>( null );
+	const { isRegistered, error } = useHardwareKeyEvent({
+		keys: [KeyCode.VOLUME_UP, KeyCode.VOLUME_DOWN],
+		onKeyDown: (event: KeyEvent) => {
+			console.log('Key down:', event.keyCodeString, event);
+			setPressed(event.keyCodeString);
+		},
+	});
 
-  useHardwareKeyEvent( {
-    callbacks: {
-      'KEYCODE_VOLUME_UP': ( response?: KeyEventResponse ) => {
-        console.log( response );
-        setPressed( 'KEYCODE_VOLUME_UP' );
-      },
-      'KEYCODE_VOLUME_DOWN': ( response?: KeyEventResponse ) => {
-        console.log( response );
-        setPressed( 'KEYCODE_VOLUME_DOWN' );
-      },
-    },
-    onError: ( error?: EventError ) => {
-      console.log( 'error', error );
-    }
-  } );
+	return (
+		<View style={styles.container}>
+			{isRegistered && (
+				<View style={styles.container}>
+					<Text>Listening for hardware keys</Text>
+					{pressed && <Text>Last pressed: {pressed}</Text>}
+				</View>
+			)}
 
-  return (
-    <View style={ styles.container }>
+			{!isRegistered && !error && <Text>Registering...</Text>}
 
-      { pressed && <View style={ styles.container }>
-        <Text>Last pressed:</Text>
-        <Text>{ pressed }</Text>
-      </View> }
+			{error && <Text style={styles.error}>Error: {error.message}</Text>}
 
-      { ! pressed && <Text>Press the volume buttons</Text>}
-
-    </View>
-  );
+			{!pressed && isRegistered && <Text>Press the volume buttons</Text>}
+		</View>
+	);
 }
 
-const styles = StyleSheet.create( {
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-} );
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	error: {
+		color: 'red',
+	},
+});
