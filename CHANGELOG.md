@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Replace yalc `file:` dependency on `@jhotadhari/release-kit` with the npm-published version (`^0.0.6`).
+
 ## [1.0.0] - 2026-07-03
 
 ## [1.0.0] - 2026-07-03
