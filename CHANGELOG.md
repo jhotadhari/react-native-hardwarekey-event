@@ -17,6 +17,7 @@ Complete library rewrite from `v0.0.3`:
 - **Documentation** — `docs/` directory with API reference, architecture overview, keycode catalog, Android setup, iOS state, testing guide, and `MIGRATION.md` (0.0.x → 1.0.0).
 - **Release tooling** — replaced `release.sh` with Commander-based JS pipeline (`release-kit`), modularized into checks / version / changelog / git / GitHub / npm modules, with `--dry-run`, `--no-test`, `--no-lint`, and npm `--tag` support.
 - **Cleanup** — removed backwards-compat `./compat` shim, aligned prettier/eslint config, and updated CI/test/docs accordingly.
+- **Dependencies** — updated all dependencies to latest (typescript 6.0.3, react-native 0.86.0, jest 30.4.2, turbo 2.x, eslint 10.x).
 
 ## [0.0.3] - 2025-04-15
 
